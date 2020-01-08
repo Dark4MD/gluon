@@ -97,3 +97,49 @@ device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 	factory = false,
 	broken = true, -- 64M ath9k + ath10k & power LED not working
 })
+
+device('tplink_archer-c7-v1', 'tplink_archer-c7-v1')
+
+device('tplink_archer-c7-v2', 'tplink_archer-c7-v2')
+
+device('tplink_archer-c7-v4', 'tplink_archer-c7-v4')
+
+device('tplink_archer-c7-v5', 'tplink_archer-c7-v5')
+
+device('tplink_cpe210-v2', 'tplink_cpe210-v2')
+
+device('tplink_cpe210-v3', 'tplink_cpe210-v3')
+
+device('tplink_tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
+
+device('tplink_tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
+
+device('tplink_tl-wr1043nd-v1', 'tplink_tl-wr1043nd-v1')
+
+device('tplink_tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2')
+
+device('tplink_tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3')
+
+device('tplink_tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4')
+
+device('tplink_tl-wr1043n-v5', 'tplink_tl-wr1043n-v5')
+
+device('tplink_tl-wr710n-v1', 'tplink_tl-wr710n-v1')
+
+device('tplink_tl-wr810n-v1', 'tplink_tl-wr810n-v1')
+
+device('tplink_tl-wr810n-v2', 'tplink_tl-wr810n-v2')
+
+-- Ubiquiti
+
+device('ubnt_unifiac-lite', 'ubnt_unifiac-lite', {
+        factory = false,
+})
+
+device('ubnt_unifiac-pro', 'ubnt_unifiac-pro', {
+        factory = false,
+})
+
+device('ubnt_unifiac-mesh', 'ubnt_unifiac-mesh', {
+        factory = false,
+})

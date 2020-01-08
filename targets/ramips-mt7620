@@ -48,7 +48,7 @@ if (env.GLUON_REGION or '') ~= '' then
 end
 
 device('tp-link-archer-c2-v1', 'tplink_c2-v1', {
-	factory = false,
+        factory = '-squashfs-factory' .. tplink_region_suffix,
 })
 
 device('tp-link-archer-c20-v1', 'tplink_c20-v1', {

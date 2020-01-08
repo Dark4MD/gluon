@@ -11,6 +11,23 @@ packages {
 	'-ppp-mod-pppoa',
 }
 
+-- AVM
+
+device('avm-fritz-box-3370-rev-2-micron-nand', 'avm_fritz3370-rev2-micron', {
+        factory = false,
+        extra_images = {
+               {'-squashfs-eva-filesystem', '-eva-filesystem', '.bin'},
+               {'-squashfs-eva-kernel', '-eva-kernel', '.bin'},
+        },
+})
+
+device('avm-fritz-box-3370-rev-2-hynix-nand', 'avm_fritz3370-rev2-hynix', {
+        factory = false,
+        extra_images = {
+               {'-squashfs-eva-filesystem', '-eva-filesystem', '.bin'},
+               {'-squashfs-eva-kernel', '-eva-kernel', '.bin'},
+        },
+})
 
 device('avm-fritz-box-3370-rev-2-hynix-nand', 'avm_fritz3370-rev2-hynix', {
 	factory = false,
