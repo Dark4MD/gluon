@@ -80,6 +80,7 @@ local primary_addrs = {
 			'archer-c7-v4',
 			'archer-c7-v5',
 			'carambola2',
+			'jt-or750i',
 			'koala',
 			'mr600',
 			'mr600v2',
