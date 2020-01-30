@@ -1,0 +1,9 @@
+defaults {
+	factory = '-ext4-sdcard',
+	factory_ext = '.img.gz',
+	sysupgrade = '-ext4-sdcard',
+	sysupgrade_ext = '.img.gz',
+}
+
+
+device('nanopi-neo2-h5', 'sun50i-h5-nanopi-neo2')

@@ -15,3 +15,7 @@ device('lemaker-banana-pro', 'sun7i-a20-bananapro', {
 device('lamobo-r1', 'sun7i-a20-lamobo-r1', {
 	broken = true, -- AP+11s not working
 })
+
+device('xunlong-orange-pi-r1', 'sun8i-h2-plus-orangepi-r1')
+
+device('xunlong-orange-pi-zero', 'sun8i-h2-plus-orangepi-zero')
