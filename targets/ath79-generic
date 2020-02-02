@@ -83,7 +83,6 @@ device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
 	packages = ATH10K_PACKAGES_QCA9887,
 	class = 'tiny',
 	broken = true,  -- 64M ath9k + ath10k
-
 })
 
 device('tp-link-archer-c6-v2', 'tplink_archer-c6-v2', {
@@ -96,4 +95,36 @@ device('tp-link-archer-d50-v1', 'tplink_archer-d50-v1', {
 	packages = ATH10K_PACKAGES_QCA9880,
 	factory = false,
 	broken = true, -- 64M ath9k + ath10k & power LED not working
+})
+
+device('tp-link-tl-wr841n-nd-mod-8m-v8', 'tplink_tl-wr841-v8-8m', {
+        factory = false,
+})
+
+device('tp-link-tl-wr841n-nd-mod-8m-v9', 'tplink_tl-wr841-v9-8m', {
+        factory = false,
+})
+
+device('tp-link-tl-wr841n-nd-mod-8m-v10', 'tplink_tl-wr841-v10-8m', {
+        factory = false,
+})
+
+device('tp-link-tl-wr841n-nd-mod-8m-v11', 'tplink_tl-wr841-v11-8m', {
+        factory = false,
+})
+
+device('tp-link-tl-wr841n-nd-mod-16m-v8', 'tplink_tl-wr841-v8-16m', {
+        factory = false,
+})
+
+device('tp-link-tl-wr841n-nd-mod-16m-v9', 'tplink_tl-wr841-v9-16m', {
+        factory = false,
+})
+
+device('tp-link-tl-wr841n-nd-mod-16m-v10', 'tplink_tl-wr841-v10-16m', {
+        factory = false,
+})
+
+device('tp-link-tl-wr841n-nd-mod-16m-v11', 'tplink_tl-wr841-v11-16m', {
+        factory = false,
 })

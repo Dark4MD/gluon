@@ -1,0 +1,361 @@
+From b7d9d287860bd6c86b7b6fdb00a073a8bcbcefd0 Mon Sep 17 00:00:00 2001
+From: Chuanhong Guo <gch981213@gmail.com>
+Date: Fri, 21 Jun 2019 18:25:12 +0800
+Subject: [PATCH 2/2] ath79: ar93xx/qca95xx: move gmac/wmac/pcie node out of
+ apb bus
+
+according to functional block diagram in datasheet, these devices
+don't belong to apb bus.
+Move these nodes out to match datasheet description.
+
+Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+---
+ target/linux/ath79/dts/ar9344.dtsi  |  2 +-
+ target/linux/ath79/dts/ar934x.dtsi  | 20 +++---
+ target/linux/ath79/dts/qca953x.dtsi | 64 +++++++++----------
+ target/linux/ath79/dts/qca9557.dtsi | 98 ++++++++++++++---------------
+ target/linux/ath79/dts/qca956x.dtsi | 62 +++++++++---------
+ 5 files changed, 123 insertions(+), 123 deletions(-)
+
+diff --git a/target/linux/ath79/dts/ar9344.dtsi b/target/linux/ath79/dts/ar9344.dtsi
+index 117c0b07a7..de118e9a3b 100644
+--- a/target/linux/ath79/dts/ar9344.dtsi
++++ b/target/linux/ath79/dts/ar9344.dtsi
+@@ -31,7 +31,7 @@
+ 	};
+ };
+ 
+-&apb {
++&ahb {
+ 	pcie: pcie-controller@180c0000 {
+ 		compatible = "qcom,ar9340-pci", "qcom,ar7240-pci";
+ 		#address-cells = <3>;
+diff --git a/target/linux/ath79/dts/ar934x.dtsi b/target/linux/ath79/dts/ar934x.dtsi
+index 831854b89b..ba1355d071 100644
+--- a/target/linux/ath79/dts/ar934x.dtsi
++++ b/target/linux/ath79/dts/ar934x.dtsi
+@@ -38,7 +38,7 @@
+ 		};
+ 	};
+ 
+-	ahb {
++	ahb: ahb {
+ 		compatible = "simple-bus";
+ 		ranges;
+ 
+@@ -133,18 +133,18 @@
+ 
+ 				#reset-cells = <1>;
+ 			};
++		};
+ 
+-			gmac: gmac@18070000 {
+-				compatible = "qca,ar9340-gmac";
+-				reg = <0x18070000 0x14>;
+-			};
++		gmac: gmac@18070000 {
++			compatible = "qca,ar9340-gmac";
++			reg = <0x18070000 0x14>;
++		};
+ 
+-			wmac: wmac@18100000 {
+-				compatible = "qca,ar9340-wmac";
+-				reg = <0x18100000 0x20000>;
++		wmac: wmac@18100000 {
++			compatible = "qca,ar9340-wmac";
++			reg = <0x18100000 0x20000>;
+ 
+-				status = "disabled";
+-			};
++			status = "disabled";
+ 		};
+ 
+ 		usb: usb@1b000000 {
+diff --git a/target/linux/ath79/dts/qca953x.dtsi b/target/linux/ath79/dts/qca953x.dtsi
+index 45e5b851fa..7a7d178ff4 100644
+--- a/target/linux/ath79/dts/qca953x.dtsi
++++ b/target/linux/ath79/dts/qca953x.dtsi
+@@ -143,43 +143,43 @@
+ 					qca,ddr-wb-channels = <&ddr_ctrl 4>, <&ddr_ctrl 3>;
+ 				};
+ 			};
++		};
+ 
+-			pcie0: pcie-controller@180c0000 {
+-				compatible = "qcom,ar7240-pci";
+-				#address-cells = <3>;
+-				#size-cells = <2>;
+-				bus-range = <0x0 0x0>;
+-				reg = <0x180c0000 0x1000>, /* CRP */
+-				      <0x180f0000 0x100>,  /* CTRL */
+-				      <0x14000000 0x1000>; /* CFG */
+-				reg-names = "crp_base", "ctrl_base", "cfg_base";
+-				ranges = <0x2000000 0 0x10000000 0x10000000 0 0x04000000	/* pci memory */
+-					  0x1000000 0 0x00000000 0x0000000 0 0x000001>;		/* io space */
+-				interrupt-parent = <&intc2>;
+-				interrupts = <1>;
+-
+-				interrupt-controller;
+-				#interrupt-cells = <1>;
+-
+-				interrupt-map-mask = <0 0 0 1>;
+-				interrupt-map = <0 0 0 0 &pcie0 0>;
+-				status = "disabled";
+-			};
++		gmac: gmac@18070000 {
++			compatible = "qca,ar9330-gmac";
++			reg = <0x18070000 0x4>;
++		};
+ 
+-			gmac: gmac@18070000 {
+-				compatible = "qca,ar9330-gmac";
+-				reg = <0x18070000 0x4>;
+-			};
++		pcie0: pcie-controller@180c0000 {
++			compatible = "qcom,ar7240-pci";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x0 0x0>;
++			reg = <0x180c0000 0x1000>, /* CRP */
++			      <0x180f0000 0x100>,  /* CTRL */
++			      <0x14000000 0x1000>; /* CFG */
++			reg-names = "crp_base", "ctrl_base", "cfg_base";
++			ranges = <0x2000000 0 0x10000000 0x10000000 0 0x04000000	/* pci memory */
++				  0x1000000 0 0x00000000 0x0000000 0 0x000001>;		/* io space */
++			interrupt-parent = <&intc2>;
++			interrupts = <1>;
++
++			interrupt-controller;
++			#interrupt-cells = <1>;
++
++			interrupt-map-mask = <0 0 0 1>;
++			interrupt-map = <0 0 0 0 &pcie0 0>;
++			status = "disabled";
++		};
+ 
+-			wmac: wmac@18100000 {
+-				compatible = "qca,qca9530-wmac";
+-				reg = <0x18100000 0x20000>;
++		wmac: wmac@18100000 {
++			compatible = "qca,qca9530-wmac";
++			reg = <0x18100000 0x20000>;
+ 
+-				interrupt-parent = <&intc2>;
+-				interrupts = <0>;
++			interrupt-parent = <&intc2>;
++			interrupts = <0>;
+ 
+-				status = "disabled";
+-			};
++			status = "disabled";
+ 		};
+ 
+ 		usb0: usb@1b000000 {
+diff --git a/target/linux/ath79/dts/qca9557.dtsi b/target/linux/ath79/dts/qca9557.dtsi
+index b726a382ee..b29dfc72b2 100644
+--- a/target/linux/ath79/dts/qca9557.dtsi
++++ b/target/linux/ath79/dts/qca9557.dtsi
+@@ -176,65 +176,65 @@
+ 
+ 				#reset-cells = <1>;
+ 			};
++		};
+ 
+-			pcie0: pcie-controller@180c0000 {
+-				compatible = "qcom,ar7240-pci";
+-				#address-cells = <3>;
+-				#size-cells = <2>;
+-				bus-range = <0x0 0x0>;
+-				reg = <0x180c0000 0x1000>, /* CRP */
+-				      <0x180f0000 0x100>,  /* CTRL */
+-				      <0x14000000 0x1000>; /* CFG */
+-				reg-names = "crp_base", "ctrl_base", "cfg_base";
+-				ranges = <0x2000000 0 0x10000000 0x10000000 0 0x02000000	/* pci memory */
+-					  0x1000000 0 0x00000000 0x0000000 0 0x000001>;		/* io space */
+-				interrupt-parent = <&intc2>;
+-				interrupts = <1>;
++		gmac: gmac@18070000 {
++			compatible = "qca,qca9550-gmac";
++			reg = <0x18070000 0x58>;
++		};
+ 
+-				interrupt-controller;
+-				#interrupt-cells = <1>;
++		pcie0: pcie-controller@180c0000 {
++			compatible = "qcom,ar7240-pci";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x0 0x0>;
++			reg = <0x180c0000 0x1000>, /* CRP */
++			      <0x180f0000 0x100>,  /* CTRL */
++			      <0x14000000 0x1000>; /* CFG */
++			reg-names = "crp_base", "ctrl_base", "cfg_base";
++			ranges = <0x2000000 0 0x10000000 0x10000000 0 0x02000000	/* pci memory */
++				  0x1000000 0 0x00000000 0x0000000 0 0x000001>;		/* io space */
++			interrupt-parent = <&intc2>;
++			interrupts = <1>;
+ 
+-				interrupt-map-mask = <0 0 0 1>;
+-				interrupt-map = <0 0 0 0 &pcie0 0>;
+-				status = "disabled";
+-			};
++			interrupt-controller;
++			#interrupt-cells = <1>;
+ 
+-			pcie1: pcie-controller@18250000 {
+-				compatible = "qcom,ar7240-pci";
+-				#address-cells = <3>;
+-				#size-cells = <2>;
+-				bus-range = <0x0 0x0>;
+-				reg = <0x18250000 0x1000>, /* CRP */
+-				      <0x18280000 0x100>,  /* CTRL */
+-				      <0x16000000 0x1000>; /* CFG */
+-				reg-names = "crp_base", "ctrl_base", "cfg_base";
+-				ranges = <0x2000000 0 0x12000000 0x12000000 0 0x02000000	/* pci memory */
+-					  0x1000000 0 0x00000000 0x0000001 0 0x000001>;		/* io space */
+-				interrupt-parent = <&intc3>;
+-				interrupts = <0>;
++			interrupt-map-mask = <0 0 0 1>;
++			interrupt-map = <0 0 0 0 &pcie0 0>;
++			status = "disabled";
++		};
+ 
+-				interrupt-controller;
+-				#interrupt-cells = <1>;
++		wmac: wmac@18100000 {
++			compatible = "qca,qca9550-wmac";
++			reg = <0x18100000 0x10000>;
+ 
+-				interrupt-map-mask = <0 0 0 1>;
+-				interrupt-map = <0 0 0 0 &pcie1 0>;
+-				status = "disabled";
+-			};
++			interrupt-parent = <&intc2>;
++			interrupts = <0>;
+ 
+-			gmac: gmac@18070000 {
+-				compatible = "qca,qca9550-gmac";
+-				reg = <0x18070000 0x58>;
+-			};
++			status = "disabled";
++		};
+ 
+-			wmac: wmac@18100000 {
+-				compatible = "qca,qca9550-wmac";
+-				reg = <0x18100000 0x10000>;
++		pcie1: pcie-controller@18250000 {
++			compatible = "qcom,ar7240-pci";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x0 0x0>;
++			reg = <0x18250000 0x1000>, /* CRP */
++			      <0x18280000 0x100>,  /* CTRL */
++			      <0x16000000 0x1000>; /* CFG */
++			reg-names = "crp_base", "ctrl_base", "cfg_base";
++			ranges = <0x2000000 0 0x12000000 0x12000000 0 0x02000000	/* pci memory */
++				  0x1000000 0 0x00000000 0x0000001 0 0x000001>;		/* io space */
++			interrupt-parent = <&intc3>;
++			interrupts = <0>;
+ 
+-				interrupt-parent = <&intc2>;
+-				interrupts = <0>;
++			interrupt-controller;
++			#interrupt-cells = <1>;
+ 
+-				status = "disabled";
+-			};
++			interrupt-map-mask = <0 0 0 1>;
++			interrupt-map = <0 0 0 0 &pcie1 0>;
++			status = "disabled";
+ 		};
+ 
+ 		usb0: usb@1b000000 {
+diff --git a/target/linux/ath79/dts/qca956x.dtsi b/target/linux/ath79/dts/qca956x.dtsi
+index 01098fdc8a..ee645aa02f 100644
+--- a/target/linux/ath79/dts/qca956x.dtsi
++++ b/target/linux/ath79/dts/qca956x.dtsi
+@@ -137,38 +137,43 @@
+ 
+ 				#reset-cells = <1>;
+ 			};
++		};
+ 
+-			wmac: wmac@18100000 {
+-				compatible = "qca,qca9560-wmac";
+-				reg = <0x18100000 0x10000>;
++		gmac: gmac@18070000 {
++			compatible = "qca,qca9560-gmac";
++			reg = <0x18070000 0x64>;
++		};
+ 
+-				interrupt-parent = <&cpuintc>;
+-				interrupts = <2>;
++		wmac: wmac@18100000 {
++			compatible = "qca,qca9560-wmac";
++			reg = <0x18100000 0x10000>;
+ 
+-				status = "disabled";
+-			};
++			interrupt-parent = <&cpuintc>;
++			interrupts = <2>;
+ 
+-			pcie: pcie-controller@18250000 {
+-				compatible = "qcom,ar7240-pci";
+-				#address-cells = <3>;
+-				#size-cells = <2>;
+-				bus-range = <0x0 0x0>;
+-				reg = <0x18250000 0x1000>, /* CRP */
+-				      <0x18280000 0x100>,  /* CTRL */
+-				      <0x16000000 0x1000>; /* CFG */
+-				reg-names = "crp_base", "ctrl_base", "cfg_base";
+-				ranges = <0x2000000 0 0x12000000 0x12000000 0 0x02000000	/* pci memory */
+-					  0x1000000 0 0x00000000 0x0000000 0 0x000001>;		/* io space */
+-				interrupt-parent = <&intc3>;
+-				interrupts = <0>;
++			status = "disabled";
++		};
+ 
+-				interrupt-controller;
+-				#interrupt-cells = <1>;
++		pcie: pcie-controller@18250000 {
++			compatible = "qcom,ar7240-pci";
++			#address-cells = <3>;
++			#size-cells = <2>;
++			bus-range = <0x0 0x0>;
++			reg = <0x18250000 0x1000>, /* CRP */
++			      <0x18280000 0x100>,  /* CTRL */
++			      <0x16000000 0x1000>; /* CFG */
++			reg-names = "crp_base", "ctrl_base", "cfg_base";
++			ranges = <0x2000000 0 0x12000000 0x12000000 0 0x02000000	/* pci memory */
++				  0x1000000 0 0x00000000 0x0000000 0 0x000001>;		/* io space */
++			interrupt-parent = <&intc3>;
++			interrupts = <0>;
+ 
+-				interrupt-map-mask = <0 0 0 1>;
+-				interrupt-map = <0 0 0 0 &pcie 0>;
+-				status = "disabled";
+-			};
++			interrupt-controller;
++			#interrupt-cells = <1>;
++
++			interrupt-map-mask = <0 0 0 1>;
++			interrupt-map = <0 0 0 0 &pcie 0>;
++			status = "disabled";
+ 		};
+ 
+ 		usb0: usb@1b000000 {
+@@ -221,11 +226,6 @@
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 		};
+-
+-		gmac: gmac@18070000 {
+-			compatible = "qca,qca9560-gmac";
+-			reg = <0x18070000 0x64>;
+-		};
+ 	};
+ 
+ 	usb_phy0: usb-phy {
+-- 
+2.20.1.windows.1
+
