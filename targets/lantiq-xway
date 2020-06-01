@@ -1,3 +1,5 @@
+ -- Arcadyan
+
 device('arcor-802', 'arcadyan_arv752dpw', {
         factory = false,
         aliases = {'vodafone-easybox-802'},
@@ -7,6 +9,9 @@ device('arcor-803', 'arcadyan_arv752dpw22', {
         factory = false,
         aliases = {'vodafone-easybox-803a'},
 })
+
+
+ -- AVM
 
 device('avm-fritz-box-7312', 'avm_fritz7312', {
 	factory = false,
