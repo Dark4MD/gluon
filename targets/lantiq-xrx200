@@ -16,7 +16,6 @@ packages {
 device('avm-fritz-box-3370-rev-2-micron-nand', 'avm_fritz3370-rev2-micron', {
         factory = false,
         extra_images = {
-               {'-initramfs-kernel', '-initramfs-kernel', '.bin'},
 			   {'-squashfs-eva-filesystem', '-eva-filesystem', '.bin'},
                {'-squashfs-eva-kernel', '-eva-kernel', '.bin'},
         },
@@ -25,7 +24,6 @@ device('avm-fritz-box-3370-rev-2-micron-nand', 'avm_fritz3370-rev2-micron', {
 device('avm-fritz-box-3370-rev-2-hynix-nand', 'avm_fritz3370-rev2-hynix', {
         factory = false,
         extra_images = {
-               {'-initramfs-kernel', '-initramfs-kernel', '.bin'},
 			   {'-squashfs-eva-filesystem', '-eva-filesystem', '.bin'},
                {'-squashfs-eva-kernel', '-eva-kernel', '.bin'},
         },
@@ -51,24 +49,15 @@ device('avm-fritz-box-3370-rev-2-micron-nand', 'avm_fritz3370-rev2-micron', {
 
 device('avm-fritz-box-7360-sl', 'avm_fritz7360sl', {
 	factory = false,
-	aliases = {'avm-fritz-box-7360-v1', 'avm-fritz-box-7360-v2'},
-	extra_images = {
-		{'-initramfs-kernel', '-initramfs-kernel', '.bin'},
-        },		
+	aliases = {'avm-fritz-box-7360-v1', 'avm-fritz-box-7360-v2'},	
 })
 
 device('avm-fritz-box-7362-sl', 'avm_fritz7362sl', {
 	factory = false,
-	extra_images = {
-		{'-initramfs-kernel', '-initramfs-kernel', '.bin'},
-        },
 })
 
 device('avm-fritz-box-7412', 'avm_fritz7412', {
 	factory = false,
-	extra_images = {
-		{'-initramfs-kernel', '-initramfs-kernel', '.bin'},
-        },
 })
 
 -- TP-Link
