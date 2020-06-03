@@ -60,6 +60,7 @@ device('tp-link-archer-c50-v1', 'tplink_archer-c50-v1', {
 	manifest_aliases = {'tp-link-archer-c50'},
 })
 
+device('tp-link-re200-v1', 'tplink_re200-v1')
 
 -- Xiaomi
 
