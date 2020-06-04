@@ -6,8 +6,8 @@ name: Build Gluon
 on:
   push:
     branches:
-      - master
-      - next*
+      - develop
+      - next
       - v20*
     paths:
       - "modules"
