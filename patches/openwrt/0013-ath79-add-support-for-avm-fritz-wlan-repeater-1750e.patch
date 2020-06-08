@@ -1,0 +1,371 @@
+From 064c896f00c79a7870fe4d86f50bbbef53cb1725 Mon Sep 17 00:00:00 2001
+From: Dark4MD <github.web@manu.li>
+Date: Mon, 8 Jun 2020 20:03:14 +0200
+Subject: [PATCH] ath79: add support for AVM FRITZ!WLAN Repeater 1750E
+
+This commit adds support for the AVM Fritz!WLAN Repeater 1750E
+
+SOC:	Qualcomm QCA9556 (Scorpion) 720MHz MIPS74Kc
+RAM:    64MB Zentel A3R12E40CBF DDR2
+FLASH:  16MiB Winbond W25Q128 SPI NOR
+WLAN1:  QCA9556 2.4 GHz 802.11b/g/n 3x3
+WLAN2:  QCA9880 5 GHz 802.11 n/ac 3x3
+INPUT:  WPS button
+LED:    Power, WiFi, LAN, RSSI indicator
+Serial: Header Next to Black metal shield
+        Pinout is 3.3V - RX - TX - GND (Square Pad is 3.3V)
+        The Serial setting is 115200-8-N-1.
+
+Tested and working:
+ - Ethernet
+ - 2.4 GHz WiFi (correct MAC)
+ - 5 GHz WiFi (correct MAC)
+ - Installation via EVA bootloader
+ - OpenWRT sysupgrade
+ - Buttons
+ - LEDs
+
+Installation via EVA:
+In the first seconds after Power is connected, the bootloader will
+listen for FTP connections on 192.168.178.1. Firmware can be uploaded
+like following:
+
+  ftp> quote USER adam2
+  ftp> quote PASS adam2
+  ftp> binary
+  ftp> debug
+  ftp> passive
+  ftp> quote MEDIA FLSH
+  ftp> put openwrt-sysupgrade.bin mtd1
+
+Note that this procedure might take up to two minutes.
+You need to powercycle the Device afterwards to boot OpenWRT.
+
+---
+ .../ath79/base-files/etc/board.d/01_leds      |   9 +
+ .../ath79/base-files/etc/board.d/02_network   |   4 +
+ .../etc/hotplug.d/firmware/10-ath9k-eeprom    |   1 +
+ .../etc/hotplug.d/firmware/11-ath10k-caldata  |   3 +
+ .../base-files/lib/preinit/10_fix_eth_mac.sh  |  11 +
+ .../ath79/dts/qca9556_avm_fritz1750e.dts      | 195 ++++++++++++++++++
+ target/linux/ath79/image/generic.mk           |  14 ++
+ 7 files changed, 237 insertions(+)
+ create mode 100644 target/linux/ath79/base-files/lib/preinit/10_fix_eth_mac.sh
+ create mode 100644 target/linux/ath79/dts/qca9556_avm_fritz1750e.dts
+
+diff --git a/target/linux/ath79/base-files/etc/board.d/01_leds b/target/linux/ath79/base-files/etc/board.d/01_leds
+index c3fa7f6a61..4d7b38c745 100755
+--- a/target/linux/ath79/base-files/etc/board.d/01_leds
++++ b/target/linux/ath79/base-files/etc/board.d/01_leds
+@@ -12,6 +12,15 @@ case "$board" in
+ 	ucidef_set_led_netdev "lan" "LAN" "$boardname:orange:eth0" "eth0"
+ 	ucidef_set_led_switch "wan" "WAN" "$boardname:orange:eth1" "switch0" "0x04"
+ 	;;
++avm,fritz1750e)
++	ucidef_set_led_netdev "lan" "LAN" "$boardname:green:lan" "eth0"
++	ucidef_set_rssimon "wlan1" "200000" "1"
++	ucidef_set_led_rssi "rssilow" "RSSILOW" "$boardname:green:rssi0" "wlan1" "1" "100"
++	ucidef_set_led_rssi "rssimediumlow" "RSSIMEDIUMLOW" "$boardname:green:rssi1" "wlan1" "20" "100"
++	ucidef_set_led_rssi "rssimedium" "RSSIMEDIUM" "$boardname:green:rssi2" "wlan1" "40" "100"
++	ucidef_set_led_rssi "rssimediumhigh" "RSSIMEDIUMHIGH" "$boardname:green:rssi3" "wlan1" "60" "100"
++	ucidef_set_led_rssi "rssihigh" "RSSIHIGH" "$boardname:green:rssi4" "wlan1" "80" "100"
++	;;
+ avm,fritz300e)
+ 	ucidef_set_led_netdev "lan" "LAN" "$boardname:green:lan" "eth0"
+ 	ucidef_set_rssimon "wlan0" "200000" "1"
+diff --git a/target/linux/ath79/base-files/etc/board.d/02_network b/target/linux/ath79/base-files/etc/board.d/02_network
+index 9b9bc8a7fc..ca73e67c4e 100755
+--- a/target/linux/ath79/base-files/etc/board.d/02_network
++++ b/target/linux/ath79/base-files/etc/board.d/02_network
+@@ -11,6 +11,7 @@ ath79_setup_interfaces()
+ 	case "$board" in
+ 	aruba,ap-105|\
+ 	avm,fritz300e|\
++	avm,fritz1750e|\
+ 	devolo,dvl1200i|\
+ 	devolo,dvl1750c|\
+ 	devolo,dvl1750i|\
+@@ -293,6 +294,9 @@ ath79_setup_macs()
+ 	local board="$1"
+ 
+ 	case "$board" in
++	avm,fritz1750e)
++		label_mac=$(fritz_tffs -n macwlan -i $(find_mtd_part "tffs (1)"))
++		;;
+ 	avm,fritz300e)
+ 		lan_mac=$(fritz_tffs -n maca -i $(find_mtd_part "tffs (1)"))
+ 		;;
+diff --git a/target/linux/ath79/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom b/target/linux/ath79/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
+index fd889e36bb..4467d51524 100644
+--- a/target/linux/ath79/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
++++ b/target/linux/ath79/base-files/etc/hotplug.d/firmware/10-ath9k-eeprom
+@@ -97,6 +97,7 @@ board=$(board_name)
+ case "$FIRMWARE" in
+ "ath9k-eeprom-ahb-18100000.wmac.bin")
+ 	case $board in
+++	avm,fritz1750e|\
+ 	avm,fritz4020)
+ 		ath9k_eeprom_extract_reverse "urlader" 5441 1088
+ 		;;
+diff --git a/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata b/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+index d93e6dcd71..92a8f5bcc8 100644
+--- a/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
++++ b/target/linux/ath79/base-files/etc/hotplug.d/firmware/11-ath10k-caldata
+@@ -87,6 +87,9 @@ board=$(board_name)
+ case "$FIRMWARE" in
+ "ath10k/cal-pci-0000:00:00.0.bin")
+ 	case $board in
++	avm,fritz1750e)
++		caldata_extract "urlader" 0x198a 0x844
++		;;
+ 	devolo,dvl1200e|\
+ 	devolo,dvl1200i|\
+ 	devolo,dvl1750c|\
+diff --git a/target/linux/ath79/base-files/lib/preinit/10_fix_eth_mac.sh b/target/linux/ath79/base-files/lib/preinit/10_fix_eth_mac.sh
+new file mode 100644
+index 0000000000..87a3d0f9df
+--- /dev/null
++++ b/target/linux/ath79/base-files/lib/preinit/10_fix_eth_mac.sh
+@@ -0,0 +1,11 @@
++#!/bin/sh
++. /lib/functions.sh
++
++preinit_set_mac_address() {
++	case $(board_name) in
++	avm,fritz1750e)
++		ip link set dev eth0 address $(fritz_tffs -n maca -i $(find_mtd_part "tffs (1)"))
++		;;
++	esac
++}
++boot_hook_add preinit_main preinit_set_mac_address
+\ No newline at end of file
+diff --git a/target/linux/ath79/dts/qca9556_avm_fritz1750e.dts b/target/linux/ath79/dts/qca9556_avm_fritz1750e.dts
+new file mode 100644
+index 0000000000..d973f7bc7e
+--- /dev/null
++++ b/target/linux/ath79/dts/qca9556_avm_fritz1750e.dts
+@@ -0,0 +1,195 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++#include "qca9557.dtsi"
++
++/ {
++	compatible = "avm,fritz1750e", "qca,qca9557";
++	model = "AVM FRITZ!WLAN Repeater 1750E";
++
++	chosen {
++		bootargs = "console=ttyS0,115200n8";
++	};
++
++	aliases {
++		led-boot = &led_power;
++		led-failsafe = &led_power;
++		led-running = &led_power;
++		led-upgrade = &led_power;
++	};
++
++	led_spi {
++		compatible = "spi-gpio";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		sck-gpios = <&gpio 14 GPIO_ACTIVE_HIGH>;
++		mosi-gpios = <&gpio 15 GPIO_ACTIVE_HIGH>;
++		num-chipselects = <0>;
++
++		spi_gpio: led_gpio@0 {
++			compatible = "fairchild,74hc595";
++			reg = <0>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			registers-number = <1>;
++			spi-max-frequency = <10000000>;
++
++			gpio_latch_bit {
++				gpio-hog;
++				gpios = <7 GPIO_ACTIVE_HIGH>;
++				output-high;
++				line-name = "gpio-latch-bit";
++			};
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_power: power {
++			label = "fritz1750e:green:power";
++			gpios = <&spi_gpio 6 GPIO_ACTIVE_HIGH>;
++		};
++
++		wlan {
++			label = "fritz1750e:green:wlan";
++			gpios = <&spi_gpio 5 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "phy1tpt";
++		};
++
++		lan {
++			label = "fritz1750e:green:lan";
++			gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
++		};
++
++		rssi0 {
++			label = "fritz1750e:green:rssi0";
++			gpios = <&spi_gpio 0 GPIO_ACTIVE_HIGH>;
++		};
++
++		rssi1 {
++			label = "fritz1750e:green:rssi1";
++			gpios = <&spi_gpio 1 GPIO_ACTIVE_HIGH>;
++		};
++
++		rssi2 {
++			label = "fritz1750e:green:rssi2";
++			gpios = <&spi_gpio 2 GPIO_ACTIVE_HIGH>;
++		};
++
++		rssi3 {
++			label = "fritz1750e:green:rssi3";
++			gpios = <&spi_gpio 3 GPIO_ACTIVE_HIGH>;
++		};
++
++		rssi4 {
++			label = "fritz1750e:green:rssi4";
++			gpios = <&spi_gpio 4 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		wps {
++			label = "wps";
++			linux,code = <KEY_WPS_BUTTON>;
++			gpios = <&gpio 4 GPIO_ACTIVE_HIGH>;
++		};
++	};
++};
++
++&pcie0 {
++	status = "okay";
++};
++
++&uart {
++	status = "okay";
++};
++
++&spi {
++	status = "okay";
++	num-cs = <1>;
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <25000000>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "urlader";
++				reg = <0x0 0x20000>;
++				read-only;
++			};
++
++			partition@20000 {
++				compatible = "avm,eva-firmware";
++				label = "firmware";
++				reg = <0x20000 0xee0000>;
++			};
++
++			partition@f00000 {
++				label = "tffs (1)";
++				reg = <0xf00000 0x80000>;
++				read-only;
++			};
++
++			partition@f80000 {
++				label = "tffs (2)";
++				reg = <0xf80000 0x80000>;
++				read-only;
++			};
++		};
++	};
++};
++
++&gpio {
++	reset-pcie-ep {
++		gpio-hog;
++		gpios = <17 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "PCIE EP reset";
++	};
++
++	reset-pcie {
++		gpio-hog;
++		gpios = <18 GPIO_ACTIVE_HIGH>;
++		output-high;
++		line-name = "PCIE Bus reset";
++	};
++};
++
++&wmac {
++	status = "okay";
++	qca,no-eeprom;
++};
++
++&eth1 {
++	status = "okay";
++
++	phy-handle = <&phy0>;
++	pll-data = <0x3000000 0x101 0x1313>;
++
++	gmac-config {
++		device = <&gmac>;
++		ge0-sgmii = <0>;
++	};
++};
++
++&mdio1 {
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		reg = <0>;
++		reset-gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
++	};
++};
+\ No newline at end of file
+diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
+index 55053be34f..2249c93356 100644
+--- a/target/linux/ath79/image/generic.mk
++++ b/target/linux/ath79/image/generic.mk
+@@ -93,6 +93,20 @@ define Device/aruba_ap-105
+ endef
+ TARGET_DEVICES += aruba_ap-105
+ 
++define Device/avm_fritz1750e
++  ATH_SOC := qca9556
++  DEVICE_TITLE := AVM FRITZ!WLAN Repeater 1750E
++  KERNEL := kernel-bin | append-dtb | lzma | eva-image
++  KERNEL_INITRAMFS := $$(KERNEL)
++  IMAGE_SIZE := 15232k
++  IMAGE/sysupgrade.bin := append-kernel | pad-to 64k | \
++	append-squashfs-fakeroot-be | pad-to 256 | append-rootfs | pad-rootfs | \
++	append-metadata | check-size $$$$(IMAGE_SIZE)
++  DEVICE_PACKAGES += rssileds kmod-ath10k-ct-smallbuffers \
++	ath10k-firmware-qca988x-ct fritz-tffs -swconfig
++endef
++TARGET_DEVICES += avm_fritz1750e
++
+ define Device/avm_fritz300e
+   ATH_SOC := ar7242
+   DEVICE_TITLE := AVM FRITZ!WLAN Repeater 300E
+-- 
+2.27.0.windows.1
+
