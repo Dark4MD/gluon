@@ -1,0 +1,75 @@
+From 20c20635fd9b6c5b49229cb48468b0e10e553f40 Mon Sep 17 00:00:00 2001
+From: David Bauer <mail@david-bauer.net>
+Date: Wed, 8 Apr 2020 14:49:39 +0200
+Subject: [PATCH] lantiq: add AVM FRITZ!Box 7320 LAN1 PHY
+
+The AVM FRITZ!Box 7320 LAN1 port currently only works when the port is
+up on boot. Otherwise the bootloader asserts the PHY reset.
+
+Also fix the obviously incorrect PHY mode, as the Lantiq PEF7071 only
+support RGMII.
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+---
+ .../mips/boot/dts/lantiq/ar9_avm_fritz7320.dts    | 15 ++++++++++++++-
+ .../mips/boot/dts/lantiq/ar9_avm_fritz7320.dts    | 15 ++++++++++++++-
+ 2 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/target/linux/lantiq/files-4.19/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts b/target/linux/lantiq/files-4.19/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts
+index 424b778bb4..01cc986710 100644
+--- a/target/linux/lantiq/files-4.19/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts
++++ b/target/linux/lantiq/files-4.19/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts
+@@ -74,9 +74,22 @@
+ };
+ 
+ &gsw {
+-	phy-mode = "mii";
++	phy-mode = "rgmii";
+ 	mtd-mac-address = <&ath9k_cal 0xa91>;
+ 	mtd-mac-address-increment = <(-2)>;
++
++	phy-handle = <&phy0>;
++
++	mdio-bus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		phy0: ethernet-phy@0 {
++			compatible = "lantiq,phy11g", "ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++			reset-gpios = <&gpio 34 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &localbus {
+diff --git a/target/linux/lantiq/files-5.4/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts b/target/linux/lantiq/files-5.4/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts
+index 424b778bb4..01cc986710 100644
+--- a/target/linux/lantiq/files-5.4/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts
++++ b/target/linux/lantiq/files-5.4/arch/mips/boot/dts/lantiq/ar9_avm_fritz7320.dts
+@@ -74,9 +74,22 @@
+ };
+ 
+ &gsw {
+-	phy-mode = "mii";
++	phy-mode = "rgmii";
+ 	mtd-mac-address = <&ath9k_cal 0xa91>;
+ 	mtd-mac-address-increment = <(-2)>;
++
++	phy-handle = <&phy0>;
++
++	mdio-bus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		phy0: ethernet-phy@0 {
++			compatible = "lantiq,phy11g", "ethernet-phy-ieee802.3-c22";
++			reg = <0>;
++			reset-gpios = <&gpio 34 GPIO_ACTIVE_LOW>;
++		};
++	};
+ };
+ 
+ &localbus {
+-- 
+2.25.1
