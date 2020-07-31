@@ -1,0 +1,263 @@
+From dbaf0d20bb6afec4a592456af6b1238b46fa1acb Mon Sep 17 00:00:00 2001
+From: Lars Wessels <software@bytebox.org>
+Date: Thu, 25 Jun 2020 21:09:59 +0200
+Subject: [PATCH] ramips: add support for WAVLINK WL-WN577A2
+
+This commit adds support for the Wavlink WL-WN577A2 (black case) dual-band
+wall-plug wireless router. In Germany this device is sold under the brand
+name Maginon WL-755 (white case):
+
+Device specifications:
+
+- CPU: MediaTek MT7628AN (580MHz)
+- Flash: 8MB
+- RAM: 64MB
+- Bootloader: U-Boot
+- Ethernet: 2x 10/100 Mbps (Ralink RT3050)
+- 2.4 GHz: 802.11b/g/n SoC
+- 5 GHz: 802.11a/n/ac MT7610E
+- Antennas: internal
+- 4 green LEDs: 1 programmable (WPS) + LAN, WAN, POWER
+- Buttons: Reset, WPS
+- Small sliding power switch
+
+Flashing instructions (U-boot):
+
+- Configure a TFTP server on your PC/Laptop and set its IP
+  to 192.168.10.100
+
+- Rename the OpenWrt image to firmware.bin and place it in the
+  root folder of the TFTP server
+
+- Power off (using the small sliding power switch on the left
+  side) the device and connect an ethernet cable from its LAN
+  or WAN port to your PC/Laptop
+
+- Press the WPS button (and keep it pressed)
+
+- Power on the device (using the small power switch)
+
+- After a few seconds, when the WAN/LAN LED stops blinking
+  very fast, release the WPS button
+
+- Flashing OpenWrt takes less than a minute, system will
+  reboot automatically
+
+- After reboot the WPS LED will indicate the current OpenWrt
+  running status
+
+Signed-off-by: Lars Wessels <software@bytebox.org>
+[removed unused labels - fix whitespace errors - wrap commit message]
+Signed-off-by: David Bauer <mail@david-bauer.net>
+---
+ .../dts/WL-WN575A2.dts                        | 137 ++++++++++++++++++
+ target/linux/ramips/image/mt76x8.mk           |  10 ++
+ .../mt76x8/base-files/etc/board.d/01_leds     |   4 +
+ .../mt76x8/base-files/etc/board.d/02_network  |   7 +-
+ 4 files changed, 157 insertions(+), 1 deletion(-)
+ create mode 100644 target/linux/ramips/dts/WL-WN575A2.dts
+
+diff --git a/target/linux/ramips/dts/WL-WN575A2.dts b/target/linux/ramips/dts/WL-WN575A2.dts
+new file mode 100644
+index 000000000000..41dfec3275b6
+--- /dev/null
++++ b/target/linux/ramips/dts/WL-WN575A2.dts
+@@ -0,0 +1,137 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/dts-v1/;
++
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
++
++#include "mt7628an.dtsi"
++
++/ {
++	compatible = "wavlink,wl-wn577a2", "maginon,wlr-755", "mediatek,mt7628an-soc";
++	model = "WAVLINK WL-WN577A2";
++
++	aliases {
++		led-boot = &led_wps;
++		led-failsafe = &led_wps;
++		led-running = &led_wps;
++		led-upgrade = &led_wps;
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			gpios = <&gpio 43 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_RESTART>;
++		};
++
++		wps {
++			label = "wps";
++			gpios = <&gpio 38 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_WPS_BUTTON>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		lan {
++			label = "wl-wn577a2:green:lan";
++			gpios = <&gpio 40 GPIO_ACTIVE_LOW>;
++		};
++
++		wan {
++			label = "wl-wn577a2:green:wan";
++			gpios = <&gpio 39 GPIO_ACTIVE_LOW>;
++		};
++
++		led_wps: wps {
++			label = "wl-wn577a2:green:wps";
++			gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&state_default {
++	gpio {
++		groups = "i2c", "wdt", "p0led_an", "p3led_an", "p4led_an";
++		function = "gpio";
++	};
++};
++
++&pcie {
++	status = "okay";
++};
++
++&pcie0 {
++	mt76@0,0 {
++		reg = <0x0000 0 0 0 0>;
++		mediatek,mtd-eeprom = <&factory 0x8000>;
++		ieee80211-freq-limit = <5000000 6000000>;
++	};
++};
++
++&spi0 {
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <40000000>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "u-boot";
++				reg = <0x0 0x30000>;
++				read-only;
++			};
++
++			partition@30000 {
++				label = "u-boot-env";
++				reg = <0x30000 0x10000>;
++				read-only;
++			};
++
++			factory: partition@40000 {
++				label = "factory";
++				reg = <0x40000 0x10000>;
++				read-only;
++			};
++
++			partition@50000 {
++				compatible = "denx,uimage";
++				label = "firmware";
++				reg = <0x50000 0x7b0000>;
++			};
++		};
++	};
++};
++
++&wmac {
++	status = "okay";
++};
++
++&ethernet {
++	mtd-mac-address = <&factory 0x28>;
++};
++
++&esw {
++	mediatek,portmap = <0x2f>;
++};
++
++&usbphy {
++	status = "disabled";
++};
++
++&ehci {
++	status = "disabled";
++};
++
++&ohci {
++	status = "disabled";
++};
+diff --git a/target/linux/ramips/image/mt76x8.mk b/target/linux/ramips/image/mt76x8.mk
+index a18afefd743d..605537ace37e 100644
+--- a/target/linux/ramips/image/mt76x8.mk
++++ b/target/linux/ramips/image/mt76x8.mk
+@@ -556,6 +556,16 @@ define Device/wavlink_wl-wn575a3
+ endef
+ TARGET_DEVICES += wavlink_wl-wn575a3
+ 
++define Device/wavlink_wl-wn577a2
++  IMAGE_SIZE := 7872k
++  DEVICE_VENDOR := Wavlink
++  DEVICE_MODEL := WL-WN577A2
++  DEVICE_ALT0_VENDOR := Maginon
++  DEVICE_ALT0_MODEL := WLR-755
++  DEVICE_PACKAGES := kmod-mt76x0e
++endef
++TARGET_DEVICES += wavlink_wl-wn577a2
++
+ define Device/widora_neo-16m
+   IMAGE_SIZE := 16064k
+   DEVICE_VENDOR := Widora
+diff --git a/target/linux/ramips/mt76x8/base-files/etc/board.d/01_leds b/target/linux/ramips/mt76x8/base-files/etc/board.d/01_leds
+index fc582becb93d..9db39cbddeea 100755
+--- a/target/linux/ramips/mt76x8/base-files/etc/board.d/01_leds
++++ b/target/linux/ramips/mt76x8/base-files/etc/board.d/01_leds
+@@ -122,6 +122,10 @@ wavlink,wl-wn575a3)
+ 	ucidef_set_led_rssi "wifi-med" "wifi-med" "$boardname:green:wifi-med" "wlan1" "50" "84"
+ 	ucidef_set_led_rssi "wifi-high" "wifi-high" "$boardname:green:wifi-high" "wlan1" "85" "100"
+ 	;;
++wavlink,wl-wn577a2)
++	ucidef_set_led_switch "lan" "lan" "$boardname:green:lan" "switch0" "0x8"
++	ucidef_set_led_switch "wan" "wan" "$boardname:green:wan" "switch0" "0x10"
++	;;
+ zbtlink,zbt-we1226)
+ 	set_wifi_led "$boardname:green:wlan"
+ 	ucidef_set_led_switch "lan1" "LAN1" "$boardname:green:lan1" "switch0" "0x01"
+diff --git a/target/linux/ramips/mt76x8/base-files/etc/board.d/02_network b/target/linux/ramips/mt76x8/base-files/etc/board.d/02_network
+index 2b4ca0926fd9..1cccc16415d7 100755
+--- a/target/linux/ramips/mt76x8/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/mt76x8/base-files/etc/board.d/02_network
+@@ -38,7 +38,8 @@ ramips_setup_interfaces()
+ 		ucidef_add_switch "switch0" \
+ 			"0:lan" "1:lan" "2:lan" "3:lan" "4:wan" "6@eth0"
+ 		;;
+-	buffalo,wcr-1166ds)
++	buffalo,wcr-1166ds|\
++	wavlink,wl-wn577a2)
+ 		ucidef_add_switch "switch0" \
+ 			"3:lan" "4:wan" "6@eth0"
+ 		;;
+@@ -186,6 +187,10 @@ ramips_setup_macs()
+ 	wiznet,wizfi630s)
+ 		wan_mac=$(macaddr_add "$(mtd_get_mac_binary factory 0x28)" 1)
+ 		;;
++	wavlink,wl-wn577a2)
++		wan_mac=$(mtd_get_mac_binary factory 0x2e)
++		label_mac=$(mtd_get_mac_binary factory 0x4)
++		;;
+ 	skylab,skw92a|\
+ 	totolink,lr1200)
+ 		wan_mac=$(mtd_get_mac_binary factory 0x2e)
