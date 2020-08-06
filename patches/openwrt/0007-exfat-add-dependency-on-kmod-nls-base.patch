@@ -1,0 +1,24 @@
+From: David Bauer <mail@david-bauer.net>
+Date: Thu, 6 Aug 2020 21:24:43 +0200
+Subject: exfat: add dependency on kmod-nls-base
+
+Add a dependency on kmod-nls-base for the new exfat driver. Otherwise
+the build fails on ramips and ath79 on kernel 5.4:
+
+Package kmod-fs-exfat is missing dependencies for the following libraries:
+nls_base.ko
+
+Signed-off-by: David Bauer <mail@david-bauer.net>
+
+diff --git a/package/kernel/exfat/Makefile b/package/kernel/exfat/Makefile
+index 539bdfd2956d3d64005f968e18689bcd83bed1da..1fa859c6078f030f89025e3d14f20bbb3ca75795 100644
+--- a/package/kernel/exfat/Makefile
++++ b/package/kernel/exfat/Makefile
+@@ -36,6 +36,7 @@ define KernelPackage/fs-exfat
+   TITLE:=exFAT kernel module
+   FILES:=$(PKG_BUILD_DIR)/exfat.ko
+   AUTOLOAD:=$(call AutoProbe,exfat)
++  DEPENDS:= +kmod-nls-base
+ endef
+ 
+ define KernelPackage/exfat/description
