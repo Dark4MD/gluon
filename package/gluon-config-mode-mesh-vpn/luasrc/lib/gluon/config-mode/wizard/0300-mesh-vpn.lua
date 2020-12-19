@@ -1,8 +1,11 @@
-local vpn = require 'gluon.mesh-vpn'
-local _, active_vpn = vpn.get_active_provider()
+local unistd = require 'posix.unistd'
+
+local has_fastd = unistd.access('/lib/gluon/mesh-vpn/fastd')
+local has_tunneldigger = unistd.access('/lib/gluon/mesh-vpn/tunneldigger')
+local has_wireguard = unistd.access('/lib/gluon/mesh-vpn/wireguard')
 
 return function(form, uci)
-	if active_vpn == nil then
+	if not (has_fastd or has_tunneldigger or has_wireguard) then
 		return
 	end
 
@@ -56,7 +59,11 @@ return function(form, uci)
 		uci:set("gluon", "mesh_vpn", "limit_egress", data * 1000)
 	end
 
-	function s:write()
+	function s:handle()
+		Section.handle(s)
 		uci:save('gluon')
+		os.execute('exec /lib/gluon/mesh-vpn/update-config')
 	end
+
+	return {'gluon', 'fastd', 'network', 'tunneldigger', 'wgpeerselector', 'simple-tc'}
 end
