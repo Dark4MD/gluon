@@ -2,7 +2,6 @@
 
 local site = require 'gluon.site'
 local util = require 'gluon.util'
-local vpn_core = require 'gluon.mesh-vpn'
 
 local uci = require('simple-uci').cursor()
 
@@ -38,7 +37,7 @@ end
 uci:section('fastd', 'fastd', 'mesh_vpn', {
 	group = 'gluon-mesh-vpn',
 	syslog_level = syslog_level,
-	interface = vpn_core.get_interface(),
+	interface = 'vpn',
 	mode = 'tap',
 	mtu = site.mesh_vpn.mtu(),
 	secure_handshakes = true,
