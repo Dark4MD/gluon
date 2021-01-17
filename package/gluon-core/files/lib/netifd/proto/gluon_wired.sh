@@ -7,7 +7,7 @@ init_proto "$@"
 proto_gluon_wired_init_config() {
         proto_config_add_boolean transitive
         proto_config_add_int index
-        proto_config_add_boolean vxlan
+        proto_config_add_boolean add_vxlan_layer
         proto_config_add_string vxpeer6addr
 }
 
@@ -24,13 +24,9 @@ is_layer3_device () {
 # shellcheck disable=SC2086
 interface_linklocal() {
         if is_layer3_device "$1"; then
-                if ! ubus call network.interface dump | \
-                     jsonfilter -e "@.interface[@.l3_device='$1']['ipv6-address'][*].address" | \
-                     grep -e '^fe[89ab][0-9a-f]' -m 1; then
-                        proto_notify_error "$config" "MISSING_LL_ADDR_ON_LOWER_IFACE"
-                        proto_block_restart "$config"
-                        exit 1
-                fi
+                ubus call network.interface dump | \
+                        jsonfilter -e "@.interface[@.l3_device='$1']['ipv6-address'][*].address" | \
+                        grep -e '^fe[89ab]' | head -n 1
                 return
         fi
 
@@ -46,17 +42,21 @@ proto_gluon_wired_setup() {
 
         local meshif="$config"
 
-        local transitive index vxlan vxpeer6addr
-        json_get_vars transitive index vxlan vxpeer6addr
+        local transitive index vxpeer6addr add_vxlan_layer
+        json_get_vars transitive index vxpeer6addr add_vxlan_layer
 
         # default args
-        [ -z "$vxlan" ] && vxlan=1
+        if [ -z "$add_vxlan_layer" ]; then
+                proto_notify_error "$config" "MISSING_OPTION_ADD_VXLAN_LAYER"
+                proto_block_restart "$config"
+                exit
+        fi
         [ -z "$vxpeer6addr" ] && vxpeer6addr='ff02::15c'
 
         proto_init_update "$ifname" 1
         proto_send_update "$config"
 
-        if [ "$vxlan" -eq 1 ]; then
+        if [ "$add_vxlan_layer" -eq 1 ]; then
                 meshif="vx_$config"
 
                 json_init
@@ -77,6 +77,7 @@ proto_gluon_wired_setup() {
         json_init
         json_add_string name "${config}_mesh"
         json_add_string ifname "@${meshif}"
+        [ -n "$index" ] && json_add_string macaddr "$(lua -e "print(require('gluon.util').generate_mac($index))")"
         json_add_string proto 'gluon_mesh'
         json_add_boolean fixed_mtu 1
         [ -n "$transitive" ] && json_add_boolean transitive "$transitive"
