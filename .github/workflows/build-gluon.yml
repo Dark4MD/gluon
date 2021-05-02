@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - develop
-      - next
+      - next*
       - v20*
     paths:
       - "modules"
