@@ -14,23 +14,23 @@ v2: We now use a new uci syntax to commit only the private_key and do
 Signed-off-by: Leonardo Mörlein <me@irrelefant.net>
 
 diff --git a/package/network/utils/wireguard-tools/Makefile b/package/network/utils/wireguard-tools/Makefile
-index ff0207d6da05b9cf9b5a97e1b360387c39cea7d7..93505e3d961184d8a6778fd241704d2a4c0baf23 100644
+index 5f8da147c1..bcf360329c 100644
 --- a/package/network/utils/wireguard-tools/Makefile
 +++ b/package/network/utils/wireguard-tools/Makefile
 @@ -12,7 +12,7 @@ include $(INCLUDE_DIR)/kernel.mk
  PKG_NAME:=wireguard-tools
  
- PKG_VERSION:=1.0.20191226
--PKG_RELEASE:=1
+ PKG_VERSION:=1.0.20210223
+-PKG_RELEASE:=2
 +PKG_RELEASE:=3
  
  PKG_SOURCE:=wireguard-tools-$(PKG_VERSION).tar.xz
  PKG_SOURCE_URL:=https://git.zx2c4.com/wireguard-tools/snapshot/
 diff --git a/package/network/utils/wireguard-tools/files/wireguard.sh b/package/network/utils/wireguard-tools/files/wireguard.sh
-index 4c811c6ba9a3fe7c5049c6400863cc167e7981cb..12acc9150b4a4a28e5032b63c8b3ceeef3601930 100644
+index 63261aea71..3fb8104004 100644
 --- a/package/network/utils/wireguard-tools/files/wireguard.sh
 +++ b/package/network/utils/wireguard-tools/files/wireguard.sh
-@@ -90,6 +90,20 @@ proto_wireguard_setup_peer() {
+@@ -95,6 +95,20 @@ proto_wireguard_setup_peer() {
  	fi
  }
  
@@ -51,7 +51,7 @@ index 4c811c6ba9a3fe7c5049c6400863cc167e7981cb..12acc9150b4a4a28e5032b63c8b3ceee
  proto_wireguard_setup() {
  	local config="$1"
  	local wg_dir="/tmp/wireguard"
-@@ -99,6 +113,8 @@ proto_wireguard_setup() {
+@@ -104,6 +118,8 @@ proto_wireguard_setup() {
  	local listen_port
  	local mtu
  
