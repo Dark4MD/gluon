@@ -1,12 +1,16 @@
-From: Leonardo Mörlein <me@irrelefant.net>
-Date: Sat, 16 Jan 2021 23:11:01 +0100
-Subject: package/uci: patch: delta: allow clearing delta path
+From f44d58622e6b85a247a6062afd0a8a7196e6cd68 Mon Sep 17 00:00:00 2001
+From: Manuel Kock <manu@doc.s.dot1q.de>
+Date: Sun, 9 May 2021 20:19:38 +0200
+Subject: [PATCH] delta: allow clearing delta path
 
-Temporary patch to uci. Not accepted upstream yet.
+---
+ ...0001-delta-allow-clearing-delta-path.patch | 206 ++++++++++++++++++
+ 1 file changed, 206 insertions(+)
+ create mode 100644 package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch
 
 diff --git a/package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch b/package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch
 new file mode 100644
-index 0000000000000000000000000000000000000000..5843552dee543e4551350fe87d72185bed9ef1e6
+index 0000000000..5843552dee
 --- /dev/null
 +++ b/package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch
 @@ -0,0 +1,206 @@
@@ -216,3 +220,6 @@ index 0000000000000000000000000000000000000000..5843552dee543e4551350fe87d72185b
 +-- 
 +2.30.0
 +
+-- 
+2.20.1
+
