@@ -1,63 +1,30 @@
-From f44d58622e6b85a247a6062afd0a8a7196e6cd68 Mon Sep 17 00:00:00 2001
-From: Manuel Kock <manu@doc.s.dot1q.de>
-Date: Sun, 9 May 2021 20:19:38 +0200
-Subject: [PATCH] delta: allow clearing delta path
+From f6774637ff940bf8f3a83eaee9d4d4db724b6138 Mon Sep 17 00:00:00 2001
+From: Dark4MD <github.web@manu.li>
+Date: Sun, 9 May 2021 20:58:12 +0200
+Subject: [PATCH] wgpatch uci
 
 ---
- ...0001-delta-allow-clearing-delta-path.patch | 206 ++++++++++++++++++
- 1 file changed, 206 insertions(+)
+ ...0001-delta-allow-clearing-delta-path.patch | 173 ++++++++++++++++++
+ 1 file changed, 173 insertions(+)
  create mode 100644 package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch
 
 diff --git a/package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch b/package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch
 new file mode 100644
-index 0000000000..5843552dee
+index 0000000000..3590eaddb6
 --- /dev/null
 +++ b/package/system/uci/patches/0001-delta-allow-clearing-delta-path.patch
-@@ -0,0 +1,206 @@
-+From 20ada4271e6103cc2b1bc738eb003313dcc9f07f Mon Sep 17 00:00:00 2001
-+From: =?UTF-8?q?Leonardo=20M=C3=B6rlein?= <me@irrelefant.net>
-+Date: Sun, 10 Jan 2021 19:16:10 +0100
-+Subject: [PATCH] delta: allow clearing delta path
-+MIME-Version: 1.0
-+Content-Type: text/plain; charset=UTF-8
-+Content-Transfer-Encoding: 8bit
+@@ -0,0 +1,173 @@
++From a4c797cfebdbe932598d1dda75b71e63ab55d97b Mon Sep 17 00:00:00 2001
++From: Manuel Kock <manu@doc.s.dot1q.de>
++Date: Sun, 9 May 2021 20:16:05 +0200
++Subject: [PATCH] wg-patch
 +
-+The delta path can now be cleared from libuci, lua/uci and the cli. Only
-+the savedir remains in the delta path after clearing. This enables safely
-+committing new changes from scripts without also comitting potentially
-+existing uncommited user changes.
-+
-+This introduces:
-+- the cli option '-x'.
-+- the lua method cur:clear_delta().
-+- the libuci function uci_clear_delta_path().
-+- a test case.
-+
-+To safely commit changes from shell scripts, use:
-+
-+    local tmp="$(mktemp -d)"
-+    uci -P "$tmp" config.section.var=val
-+    uci -P "$tmp" -x commit
-+    rm -rf "$tmp"
-+
-+Signed-off-by: Leonardo Mörlein <me@irrelefant.net>
 +---
-+ cli.c                                         |  7 +++-
-+ delta.c                                       | 14 ++++++++
-+ lua/uci.c                                     | 10 ++++++
-+ .../cli.options.delta.commit2.result          |  4 +++
-+ .../cli.options.delta.commit3.result          |  5 +++
-+ test/tests.d/090_cli_options                  | 33 +++++++++++++++++++
-+ uci.h                                         |  6 ++++
-+ 7 files changed, 78 insertions(+), 1 deletion(-)
-+ create mode 100644 test/references/cli.options.delta.commit2.result
-+ create mode 100644 test/references/cli.options.delta.commit3.result
-+
 +diff --git a/cli.c b/cli.c
-+index f8b45db..2935ef7 100644
++index 267437d..cee7baa 100644
 +--- a/cli.c
 ++++ b/cli.c
-+@@ -160,6 +160,7 @@ static void uci_usage(void)
++@@ -167,6 +167,7 @@ static void uci_usage(void)
 + 		"\t-N         don't name unnamed sections\n"
 + 		"\t-p <path>  add a search path for config change files\n"
 + 		"\t-P <path>  add a search path for config change files and use as default\n"
@@ -65,7 +32,7 @@ index 0000000000..5843552dee
 + 		"\t-q         quiet mode (don't print error messages)\n"
 + 		"\t-s         force strict mode (stop on parser errors, default)\n"
 + 		"\t-S         disable strict mode\n"
-+@@ -698,7 +699,7 @@ int main(int argc, char **argv)
++@@ -706,7 +707,7 @@ int main(int argc, char **argv)
 + 		return 1;
 + 	}
 + 
@@ -74,7 +41,7 @@ index 0000000000..5843552dee
 + 		switch(c) {
 + 			case 'c':
 + 				uci_set_confdir(ctx, optarg);
-+@@ -735,6 +736,10 @@ int main(int argc, char **argv)
++@@ -743,6 +744,10 @@ int main(int argc, char **argv)
 + 			case 'N':
 + 				ctx->flags &= ~UCI_FLAG_EXPORT_NAME;
 + 				break;
@@ -86,7 +53,7 @@ index 0000000000..5843552dee
 + 				uci_add_delta_path(ctx, optarg);
 + 				break;
 +diff --git a/delta.c b/delta.c
-+index 386167d..cde8953 100644
++index d8bd3a6..33a24a3 100644
 +--- a/delta.c
 ++++ b/delta.c
 +@@ -124,6 +124,20 @@ int uci_set_savedir(struct uci_context *ctx, const char *dir)
@@ -111,10 +78,10 @@ index 0000000000..5843552dee
 + {
 + 	struct uci_element *e;
 +diff --git a/lua/uci.c b/lua/uci.c
-+index b29c347..c53dc19 100644
++index 196a25b..70c2b72 100644
 +--- a/lua/uci.c
 ++++ b/lua/uci.c
-+@@ -932,6 +932,15 @@ uci_lua_add_delta(lua_State *L)
++@@ -938,6 +938,15 @@ uci_lua_add_delta(lua_State *L)
 + 	return uci_push_status(L, ctx, false);
 + }
 + 
@@ -130,7 +97,7 @@ index 0000000000..5843552dee
 + static int
 + uci_lua_set_savedir(lua_State *L)
 + {
-+@@ -1033,6 +1042,7 @@ static const luaL_Reg uci[] = {
++@@ -1039,6 +1048,7 @@ static const luaL_Reg uci[] = {
 + 	{ "foreach", uci_lua_foreach },
 + 	{ "add_history", uci_lua_add_delta },
 + 	{ "add_delta", uci_lua_add_delta },
@@ -159,10 +126,10 @@ index 0000000000..5843552dee
 ++	list li0 '1'
 ++	list li0 '0'
 ++
-+diff --git a/test/tests.d/090_cli_options b/test/tests.d/090_cli_options
++diff --git a/tests/shunit2/tests.d/090_cli_options b/tests/shunit2/tests.d/090_cli_options
 +index 55920a2..0fbec69 100644
-+--- a/test/tests.d/090_cli_options
-++++ b/test/tests.d/090_cli_options
++--- a/tests/shunit2/tests.d/090_cli_options
+++++ b/tests/shunit2/tests.d/090_cli_options
 +@@ -44,3 +44,36 @@ delta.sec0.li0+='1'" "$cmdoutput"
 + 	rm -f "$config_delta"
 + }
@@ -201,10 +168,10 @@ index 0000000000..5843552dee
 ++}
 ++
 +diff --git a/uci.h b/uci.h
-+index 43f2052..abacd93 100644
++index b385e2b..e644d3a 100644
 +--- a/uci.h
 ++++ b/uci.h
-+@@ -276,6 +276,12 @@ extern int uci_set_confdir(struct uci_context *ctx, const char *dir);
++@@ -277,6 +277,12 @@ extern int uci_set_confdir(struct uci_context *ctx, const char *dir);
 +  */
 + extern int uci_add_delta_path(struct uci_context *ctx, const char *dir);
 + 
@@ -218,8 +185,8 @@ index 0000000000..5843552dee
 +  * uci_revert: revert all changes to a config item
 +  * @ctx: uci context
 +-- 
-+2.30.0
++2.20.1
 +
 -- 
-2.20.1
+2.29.2.windows.2
 
