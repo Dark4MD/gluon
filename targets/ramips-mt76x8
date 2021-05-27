@@ -83,3 +83,9 @@ device('wavlink-wl-wn577a2', 'wavlink_wl-wn577a2', {
 	factory = false,
 	aliases = {'maginon-wlr-755'},
 })
+
+-- Xiaomi
+
+device('xiaomi-mi-router-4c', 'mi-router-4c', {
+	factory = false,
+})
