@@ -1,4 +1,4 @@
-From 1762a939f436d0c1b225696e08bfbfee231cf154 Mon Sep 17 00:00:00 2001
+From b8dec8cc452e2e2e58449035a2b610a243b3d940 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Ataberk=20=C3=96zen?= <ataberkozen123@gmail.com>
 Date: Wed, 19 Aug 2020 21:43:54 +0300
 Subject: [PATCH] ramips: add support for Xiaomi Mi Router 4C
@@ -41,9 +41,9 @@ Signed-off-by: Adrian Schmutzler <freifunk@adrianschmutzler.de>
  package/boot/uboot-envtools/files/ramips      |   1 +
  .../ramips/base-files/etc/board.d/02_network  |   7 +
  .../ramips/base-files/etc/init.d/bootcount    |   3 +
- target/linux/ramips/dts/MI-ROUTER-4C.dts      | 133 ++++++++++++++++++
+ target/linux/ramips/dts/MI-ROUTER-4C.dts      | 135 ++++++++++++++++++
  target/linux/ramips/image/mt76x8.mk           |   8 ++
- 6 files changed, 153 insertions(+), 1 deletion(-)
+ 6 files changed, 155 insertions(+), 1 deletion(-)
  create mode 100644 target/linux/ramips/dts/MI-ROUTER-4C.dts
 
 diff --git a/package/boot/uboot-envtools/Makefile b/package/boot/uboot-envtools/Makefile
@@ -112,11 +112,12 @@ index dd7cf1aed9..4ec515e961 100755
  		;;
 diff --git a/target/linux/ramips/dts/MI-ROUTER-4C.dts b/target/linux/ramips/dts/MI-ROUTER-4C.dts
 new file mode 100644
-index 0000000000..a6445c8717
+index 0000000000..93f1a87a27
 --- /dev/null
 +++ b/target/linux/ramips/dts/MI-ROUTER-4C.dts
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,135 @@
 +//SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++/dts-v1/;
 +
 +#include "mt7628an.dtsi"
 +
@@ -132,7 +133,6 @@ index 0000000000..a6445c8717
 +		led-failsafe = &led_power_yellow;
 +		led-running = &led_power_blue;
 +		led-upgrade = &led_power_yellow;
-+		label-mac-device = &ethernet;
 +	};
 +
 +	chosen {
@@ -154,20 +154,22 @@ index 0000000000..a6445c8717
 +	};
 +
 +	keys {
-+		compatible = "gpio-keys";
++		compatible = "gpio-keys-polled";
 +
 +		reset {
 +			label = "reset";
-+			gpios = <&gpio 38 GPIO_ACTIVE_LOW>;
++			gpios = <&gpio 6 GPIO_ACTIVE_LOW>;
 +			linux,code = <KEY_RESTART>;
 +		};
 +	};
 +};
 +
-+&state_default {
-+	gpio {
-+		groups = "gpio", "wdt", "wled_an";
-+		function = "gpio";
++&pinctrl {
++	state_default: pinctrl0 {
++		gpio {
++			ralink,group = "gpio", "wdt", "wled_an";
++			ralink,function = "gpio";
++		};
 +	};
 +};
 +
