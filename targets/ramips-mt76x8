@@ -72,6 +72,10 @@ device('tp-link-re200-v3', 'tplink_re200-v3')
 
 device('tp-link-re200-v4', 'tplink_re200-v4')
 
+device('tp-link-re305', 'tplink_re305-v1', {
+	class = 'tiny', -- Only 6M of usable Firmware space
+})
+
 device('tp-link-tl-mr3020-v3', 'tplink_tl-mr3020-v3', {
 	factory = false,
 	extra_images = {
@@ -126,6 +130,14 @@ device('tp-link-tl-wr902ac-v4', 'tplink_tl-wr902ac-v4', {
 
 device('vocore2', 'vocore_vocore2', {
 	factory = false,
+})
+
+
+-- Wavlink/Maginon
+
+device('wavlink-wl-wn577a2', 'wavlink_wl-wn577a2', {
+	factory = false,
+	aliases = {'maginon-wlr-755'},
 })
 
 
