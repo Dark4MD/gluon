@@ -20,6 +20,7 @@ device('gl-mt750', 'glinet_gl-mt750', {
 	factory = false,
 })
 
+
 -- Netgear
 
 device('netgear-ex3700', 'netgear_ex3700', {
@@ -30,6 +31,7 @@ device('netgear-ex3700', 'netgear_ex3700', {
 	factory_ext = '.chk',
 })
 
+
 -- Nexx
 
 device('nexx-wt3020-8m', 'nexx_wt3020-8m', {
@@ -39,6 +41,7 @@ device('nexx-wt3020-8m', 'nexx_wt3020-8m', {
 		'nexx-wt3020h',
 	},
 })
+
 
 -- TP-Link
 
