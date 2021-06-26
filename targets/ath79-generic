@@ -64,6 +64,13 @@ device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
 	class = 'tiny', -- 64M ath9k + ath10k
 })
 
+device('avm-fritz-wlan-repeater-dvb-c', 'avm_fritzdvbc', {
+	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9880,
+	factory = false,
+	broken = true, -- OOM with 5GHz enabled in most environments
+	class = 'tiny', -- 64M ath9k + ath10k
+})
+
 -- Buffalo
 
 device('buffalo-wzr-hp-ag300h', 'buffalo_wzr-hp-ag300h')
@@ -418,6 +425,20 @@ device('tp-link-archer-a7-v5', 'tplink_archer-a7-v5', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
+device('tp-link-archer-c7-v1', 'tplink_archer-c7-v1')
+
+device('tp-link-tl-wr1043nd-v1', 'tplink_tl-wr1043nd-v1', {
+	class = 'tiny', -- 32M ath9k
+})
+
+device('tp-link-tl-wr710n-v1', 'tplink_tl-wr710n-v1', {
+	class = 'tiny', -- 32M ath9k
+})
+
+device('tp-link-tl-wr810n-v2', 'tplink_tl-wr810n-v2', {
+	class = 'tiny', -- 32M ath9k
+})
+
 device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
 	packages = ATH10K_PACKAGES_SMALLBUFFERS_QCA9887,
 	class = 'tiny',
@@ -578,6 +599,8 @@ device('ubiquiti-unifi-ac-lr', 'ubnt_unifiac-lr', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
 })
+
+device('ubnt-nanostation-ac', 'ubnt_nanostation-ac')
 
 device('ubiquiti-unifi-ac-mesh', 'ubnt_unifiac-mesh', {
 	factory = false,
