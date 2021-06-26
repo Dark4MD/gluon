@@ -22,6 +22,13 @@ local ATH10K_PACKAGES_QCA9888 = {
 	'-ath10k-firmware-qca9888-ct',
 }
 
+-- AVM
+
+device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 -- devolo
 
 device('devolo-wifi-pro-1200e', 'devolo_dvl1200e', {
@@ -72,14 +79,65 @@ device('plasma-cloud-pa300', 'plasmacloud_pa300')
 
 device('plasma-cloud-pa300e', 'plasmacloud_pa300e')
 
-
 -- Siemens
 
 device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 	factory = false,
+
+-- Ubiquiti
+
+device('ubnt_unifiac-lite', 'ubnt_unifiac-lite', {
+        factory = false,
+})
+
+device('ubnt_unifiac-pro', 'ubnt_unifiac-pro', {
+        factory = false,
+})
+
+device('ubnt_unifiac-mesh', 'ubnt_unifiac-mesh', {
+        factory = false,
 })
 
 -- TP-Link
+
+device('tplink_archer-c7-v1', 'tplink_archer-c7-v1')
+
+device('tplink_archer-c7-v2', 'tplink_archer-c7-v2')
+
+device('tplink_archer-c7-v4', 'tplink_archer-c7-v4')
+
+device('tplink_archer-c7-v5', 'tplink_archer-c7-v5')
+
+device('tplink_cpe210-v2', 'tplink_cpe210-v2')
+
+device('tplink_cpe210-v3', 'tplink_cpe210-v3')
+
+device('tplink_tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
+
+device('tplink_tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
+
+device('tplink_tl-wr1043nd-v1', 'tplink_tl-wr1043nd-v1', {
+	class = 'tiny', -- 32M ath9k
+})
+
+device('tplink_tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2')
+
+device('tplink_tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3')
+
+device('tplink_tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4')
+
+device('tplink_tl-wr1043n-v5', 'tplink_tl-wr1043n-v5')
+
+device('tplink_tl-wr710n-v1', 'tplink_tl-wr710n-v1', {
+	class = 'tiny', -- 32M ath9k
+})
+
+device('tplink_tl-wr810n-v1', 'tplink_tl-wr810n-v1')
+
+device('tplink_tl-wr810n-v2', 'tplink_tl-wr810n-v2', {
+	class = 'tiny', -- 32M ath9k
+})
+
 
 device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
 	packages = ATH10K_PACKAGES_QCA9887,

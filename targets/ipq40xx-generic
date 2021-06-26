@@ -39,6 +39,7 @@ device('avm-fritz-box-4040', 'avm_fritzbox-4040', {
 })
 
 device('avm-fritz-box-7530', 'avm_fritzbox-7530', {
+	aliases = {'avm-fritz-box-7520'},
 	factory = false,
 })
 

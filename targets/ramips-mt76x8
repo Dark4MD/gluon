@@ -76,6 +76,14 @@ device('vocore2', 'vocore_vocore2', {
 })
 
 
+-- Wavlink/Maginon
+
+device('wavlink-wl-wn577a2', 'wavlink_wl-wn577a2', {
+	factory = false,
+	aliases = {'maginon-wlr-755'},
+})
+
+
 -- Xiaomi
 
 device('xiaomi-mi-router-4a-100m-edition', 'xiaomi_mi-router-4a-100m', {

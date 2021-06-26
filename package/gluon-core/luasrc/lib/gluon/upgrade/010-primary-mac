@@ -96,8 +96,12 @@ local primary_addrs = {
 			'tplink,archer-c20i',
 			'tplink,archer-c50-v1',
 		}},
+		{'ramips', 'mt7621', {
+			'xiaomi,mi-router-4a-gigabit',
+		}},
 		{'ramips', 'mt76x8', {
 			'xiaomi,mi-router-4a-100m',
+			'xiaomi,mi-router-4c',
 		}},
 		{'rockchip', 'armv8', {
 			'friendlyarm,nanopi-r2s',

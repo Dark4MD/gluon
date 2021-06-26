@@ -1,6 +1,29 @@
+-- Arcadyan
+ 
+device('arcor-802', 'arcadyan_arv752dpw', {
+        factory = false,
+        aliases = {'vodafone-easybox-802'},
+})
+
+device('arcor-803', 'arcadyan_arv752dpw22', {
+        factory = false,
+        aliases = {'vodafone-easybox-803a'},
+})
+
+
+-- AVM
+
 device('avm-fritz-box-7312', 'avm_fritz7312', {
 	factory = false,
 })
+
+device('avm-fritz-box-7320', 'avm_fritz7320', {
+	factory = false,
+	aliases = {'avm-fritz-box-7330', 'avm-fritz-box-7330-sl'},
+})
+
+
+-- Netgear
 
 device('netgear-dgn3500b', 'netgear_dgn3500b', {
 	factory_ext = '.img',
