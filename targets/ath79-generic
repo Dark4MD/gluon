@@ -32,6 +32,25 @@ device('avm-fritz-wlan-repeater-450e', 'avm_fritz450e', {
 	factory = false,
 })
 
+device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('avm-fritz-wlan-repeater-300e', 'avm_fritz300e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('avm-fritz-box-4020', 'avm_fritz4020', {
+	factory = false,
+})
+
+device('avm-fritz-wlan-repeater-dvb-c', 'avm_fritzdvbc', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 -- devolo
 
 device('devolo-wifi-pro-1200e', 'devolo_dvl1200e', {
@@ -294,6 +313,44 @@ device('tp-link-archer-a7-v5', 'tplink_archer-a7-v5', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
+device('tp-link-archer-c7-v1', 'tplink_archer-c7-v1')
+
+device('tp-link-archer-c7-v4', 'tplink_archer-c7-v4', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
+device('tp-link-archer-c7-v5', 'tplink_archer-c7-v5', {
+	packages = ATH10K_PACKAGES_QCA9880,
+})
+
+device('tp-link-cpe210-v3', 'tplink_cpe210-v3')
+
+device('tp-link-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
+
+device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
+
+device('tp-link-tl-wr1043nd-v1', 'tplink_tl-wr1043nd-v1', {
+	class = 'tiny', -- 32M ath9k
+})
+
+device('tp-link-tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2')
+
+device('tp-link-tl-wr1043n-v5', 'tplink_tl-wr1043n-v5')
+
+device('tp-link-tl-wr710n-v1', 'tplink_tl-wr710n-v1', {
+	class = 'tiny', -- 32M ath9k
+})
+
+device('tp-link-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
+
+device('tp-link-tl-wr810n-v2', 'tplink_tl-wr810n-v2', {
+	class = 'tiny', -- 32M ath9k
+})
+
+device('tp-link-tl-wr902ac-v1', 'tplink_tl-wr902ac-v1', {
+	broken = true, -- 64M ath9k + ath10k
+})
+
 device('tp-link-archer-c2-v3', 'tplink_archer-c2-v3', {
 	packages = ATH10K_PACKAGES_QCA9887,
 	class = 'tiny',
@@ -429,6 +486,8 @@ device('ubiquiti-unifi-ac-lr', 'ubnt_unifiac-lr', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
 })
+
+device('ubnt-nanostation-ac', 'ubnt_nanostation-ac')
 
 device('ubiquiti-unifi-ac-mesh', 'ubnt_unifiac-mesh', {
 	factory = false,
