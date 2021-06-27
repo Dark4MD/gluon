@@ -5,6 +5,7 @@ on:
       - main
       - next
       - 'v20[2-9][0-9].[0-9].x'
+      - develop
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
