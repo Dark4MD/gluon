@@ -6,9 +6,15 @@ name: Build Gluon
 on:
   push:
     branches:
-      - master
-      - next*
-      - v20*
+      - develop
+    paths:
+      - "modules"
+      - "Makefile"
+      - "scripts/**"
+      - "package/**"
+      - "patches/**"
+      - "targets/**"
+      - ".github/workflows/build-gluon.yml"
   pull_request:
     types: [opened, synchronize, reopened]
 
