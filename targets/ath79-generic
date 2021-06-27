@@ -29,6 +29,26 @@ device('avm-fritz-wlan-repeater-1750e', 'avm_fritz1750e', {
 	factory = false,
 })
 
+device('avm-fritz-wlan-repeater-300e', 'avm_fritz300e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('avm-frit-box-4020', 'avm_fritz4020', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('avm-fritz-wlan-repeater-450e', 'avm_fritz450e', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
+device('avm-fritz-wlan-repeater-dvb-c', 'avm_fritzdvbc', {
+	packages = ATH10K_PACKAGES_QCA9880,
+	factory = false,
+})
+
 -- devolo
 
 device('devolo-wifi-pro-1200e', 'devolo_dvl1200e', {
@@ -86,56 +106,60 @@ device('siemens-ws-ap3610', 'siemens_ws-ap3610', {
 
 -- Ubiquiti
 
-device('ubnt_unifiac-lite', 'ubnt_unifiac-lite', {
+device('ubnt-unifiac-lite', 'ubnt_unifiac-lite', {
         factory = false,
 })
 
-device('ubnt_unifiac-pro', 'ubnt_unifiac-pro', {
+device('ubnt-unifiac-pro', 'ubnt_unifiac-pro', {
         factory = false,
 })
 
-device('ubnt_unifiac-mesh', 'ubnt_unifiac-mesh', {
+device('ubnt-unifiac-mesh', 'ubnt_unifiac-mesh', {
         factory = false,
 })
 
 -- TP-Link
 
-device('tplink_archer-c7-v1', 'tplink_archer-c7-v1')
+device('tplink-archer-c7-v1', 'tplink_archer-c7-v1')
 
-device('tplink_archer-c7-v2', 'tplink_archer-c7-v2')
+device('tplink-archer-c7-v2', 'tplink_archer-c7-v2')
 
-device('tplink_archer-c7-v4', 'tplink_archer-c7-v4')
+device('tplink-archer-c7-v4', 'tplink_archer-c7-v4')
 
-device('tplink_archer-c7-v5', 'tplink_archer-c7-v5')
+device('tplink-archer-c7-v5', 'tplink_archer-c7-v5')
 
-device('tplink_cpe210-v2', 'tplink_cpe210-v2')
+device('tplink-cpe210-v2', 'tplink_cpe210-v2')
 
-device('tplink_cpe210-v3', 'tplink_cpe210-v3')
+device('tplink-cpe210-v3', 'tplink_cpe210-v3')
 
-device('tplink_tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
+device('tplink-tl-wdr3600-v1', 'tplink_tl-wdr3600-v1')
 
-device('tplink_tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
+device('tplink-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
 
-device('tplink_tl-wr1043nd-v1', 'tplink_tl-wr1043nd-v1', {
+device('tplink-tl-wr1043nd-v1', 'tplink_tl-wr1043nd-v1', {
 	class = 'tiny', -- 32M ath9k
 })
 
-device('tplink_tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2')
+device('tplink-tl-wr1043nd-v2', 'tplink_tl-wr1043nd-v2')
 
-device('tplink_tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3')
+device('tplink-tl-wr1043nd-v3', 'tplink_tl-wr1043nd-v3')
 
-device('tplink_tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4')
+device('tplink-tl-wr1043nd-v4', 'tplink_tl-wr1043nd-v4')
 
-device('tplink_tl-wr1043n-v5', 'tplink_tl-wr1043n-v5')
+device('tplink-tl-wr1043n-v5', 'tplink_tl-wr1043n-v5')
 
-device('tplink_tl-wr710n-v1', 'tplink_tl-wr710n-v1', {
+device('tplink-tl-wr710n-v1', 'tplink_tl-wr710n-v1', {
 	class = 'tiny', -- 32M ath9k
 })
 
-device('tplink_tl-wr810n-v1', 'tplink_tl-wr810n-v1')
+device('tplink-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
 
-device('tplink_tl-wr810n-v2', 'tplink_tl-wr810n-v2', {
+device('tplink-tl-wr810n-v2', 'tplink_tl-wr810n-v2', {
 	class = 'tiny', -- 32M ath9k
+})
+
+device('tplink-tl-wr902ac-v1', 'tplink_tl-wr902ac-v1', {
+	broken = true, -- 64M ath9k + ath10k
 })
 
 
