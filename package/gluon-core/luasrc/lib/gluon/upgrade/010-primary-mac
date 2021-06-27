@@ -117,8 +117,6 @@ local primary_addrs = {
 		}},
 		{'ramips', 'mt7620', {
 			'xiaomi,miwifi-mini',
-		}},
-		{'ramips', 'mt7621', {
 			'xiaomi,mi-router-4a-gigabit',
 		}},
 	}},
