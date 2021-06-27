@@ -98,7 +98,6 @@ local primary_addrs = {
 		}},
 		{'ramips', 'mt76x8', {
 			'xiaomi,mi-router-4a-100m',
-			'xiaomi,mi-router-4c',
 		}},
 		{'rockchip', 'armv8', {
 			'friendlyarm,nanopi-r2s',
@@ -117,9 +116,6 @@ local primary_addrs = {
 		}},
 		{'ramips', 'mt7620', {
 			'xiaomi,miwifi-mini',
-		}},
-		{'ramips', 'mt7621', {
-			'xiaomi,mi-router-4a-gigabit',
 		}},
 	}},
 	{phy(1), {
