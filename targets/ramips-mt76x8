@@ -100,7 +100,3 @@ device('wavlink-wl-wn577a2', 'wavlink_wl-wn577a2', {
 device('xiaomi-mi-router-4a-100m-edition', 'xiaomi_mi-router-4a-100m', {
 	factory = false,
 })
-
-device('xiaomi-mi-router-4c', 'xiaomi_mi-router-4c', {
-	factory = false,
-})
