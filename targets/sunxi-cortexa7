@@ -6,6 +6,18 @@ defaults {
 }
 
 
+device('xunlong-orange-pi-r1', 'xunlong_orangepi-r1', {
+	broken = true, -- WiFi chip not supported
+})
+
+device('xunlong-orange-pi-zero', 'xunlong_orangepi-zero', {
+	broken = true, -- WiFi chip not supported
+})
+
+device('sinovoip-banana-pi-m2-berry', 'sinovoip_bananapi-m2-berry', {
+	broken = true, -- WiFi chip not supported
+})
+
 device('lemaker-banana-pi', 'lemaker_bananapi')
 
 device('lemaker-banana-pro', 'lemaker_bananapro', {
