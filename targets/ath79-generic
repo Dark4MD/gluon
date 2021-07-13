@@ -509,3 +509,26 @@ device('ubiquiti-unifi-ap', 'ubnt_unifi', {
 })
 
 device('ubiquiti-unifi-ap-pro', 'ubnt_unifi-ap-pro')
+
+-- ZyXEL
+
+device('zyxel-nwa1121-ni', 'zyxel_nwa1121-ni', {
+	factory = '-squashfs-factory-AABJ',
+	extra_images = {
+		{'-squashfs-factory-AABJ', '-factory-AABJ', '.bin'},
+	},
+})	
+
+device('zyxel-nwa1123-ac', 'zyxel_nwa1123-ac', {
+	factory = '-squashfs-factory-AAOX',
+	extra_images = {
+		{'-squashfs-factory-AAOX', '-factory-AAOX', '.bin'},
+	},
+})
+
+device('zyxel-nwa1123-ni', 'zyxel_nwa1123-ni', {
+	factory = '-squashfs-factory-AAEO',
+	extra_images = {
+		{'-squashfs-factory-AAEO', '-factory-AAEO', '.bin'},
+	},
+})	
