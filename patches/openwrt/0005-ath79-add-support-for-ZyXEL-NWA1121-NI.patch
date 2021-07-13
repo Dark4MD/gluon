@@ -1,0 +1,316 @@
+From 3690816b576444fa4ae2cf93c84d1f29d0ce39e5 Mon Sep 17 00:00:00 2001
+From: Sebastian Schaper <openwrt@sebastianschaper.net>
+Date: Wed, 9 Sep 2020 20:42:53 +0200
+Subject: [PATCH 1/3] ath79: add support for ZyXEL NWA1121-NI
+
+Specifications:
+ * AR9342, 16 MiB Flash, 64 MiB RAM, 802.11n 2T2R, 2.4 GHz
+ * 1x Gigabit Ethernet (AR8035), 802.3af PoE
+
+Installation:
+* OEM Web UI is at 192.168.1.2
+  login as `admin` with password `1234`
+* Flash factory-AABJ.bin
+
+The string `AABJ` needs to be present within the file name of the uploaded
+image to be accepted by the OEM Web-based updater, the factory image is
+named accordingly to save the user from the hassle of manual renaming.
+
+TFTP Recovery:
+* Open the case, connect to TTL UART port (this is the official method
+  described by Zyxel, the reset button is useless during power-on)
+* Extract factory image (.tar.bz2), serve `vmlinux_mi124_f1e.lzma.uImage`
+  and `mi124_f1e-jffs2` via tftp at 192.168.1.10
+* Interrupt uboot countdown, execute commands
+  `run lk`
+  `run lf`
+  to flash the kernel / filesystem accordingly
+
+MAC addresses as verified by OEM firmware:
+use   address   source
+LAN   *:cc      mib0 0x30 ('eth0mac'), art 0x1002 (label)
+2g    *:cd      mib0 0x4b ('wifi0mac')
+
+Signed-off-by: Sebastian Schaper <openwrt@sebastianschaper.net>
+---
+ .../ath79/dts/ar9342_zyxel_nwa1121-ni.dts     |   8 +
+ .../linux/ath79/dts/ar9342_zyxel_nwa112x.dtsi | 164 ++++++++++++++++++
+ .../generic/base-files/etc/board.d/02_network |   3 +-
+ .../etc/hotplug.d/ieee80211/10_fix_wifi_mac   |   3 +
+ target/linux/ath79/image/generic.mk           |  34 +++-
+ 5 files changed, 210 insertions(+), 2 deletions(-)
+ create mode 100644 target/linux/ath79/dts/ar9342_zyxel_nwa1121-ni.dts
+ create mode 100644 target/linux/ath79/dts/ar9342_zyxel_nwa112x.dtsi
+
+diff --git a/target/linux/ath79/dts/ar9342_zyxel_nwa1121-ni.dts b/target/linux/ath79/dts/ar9342_zyxel_nwa1121-ni.dts
+new file mode 100644
+index 0000000000..5e0486bcfc
+--- /dev/null
++++ b/target/linux/ath79/dts/ar9342_zyxel_nwa1121-ni.dts
+@@ -0,0 +1,8 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "ar9342_zyxel_nwa112x.dtsi"
++
++/ {
++	compatible = "zyxel,nwa1121-ni", "qca,ar9342";
++	model = "Zyxel NWA1121-NI";
++};
+diff --git a/target/linux/ath79/dts/ar9342_zyxel_nwa112x.dtsi b/target/linux/ath79/dts/ar9342_zyxel_nwa112x.dtsi
+new file mode 100644
+index 0000000000..6ec801fee2
+--- /dev/null
++++ b/target/linux/ath79/dts/ar9342_zyxel_nwa112x.dtsi
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "ar9344.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/mtd/partitions/uimage.h>
++
++/ {
++	aliases {
++		label-mac-device = &eth0;
++		led-boot = &led_status_green;
++		led-failsafe = &led_status_amber;
++		led-running = &led_status_green;
++		led-upgrade = &led_status_amber;
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led_status_green: status_green {
++			label = "green:status";
++			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
++			default-state = "on";
++		};
++
++		led_status_amber: status_amber {
++			label = "amber:status";
++			gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	virtual_flash {
++		compatible = "mtd-concat";
++
++		devices = <&fwconcat0 &fwconcat1>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				compatible = "openwrt,uimage", "denx,uimage";
++				openwrt,ih-magic = <IH_MAGIC_OKLI>;
++				label = "firmware";
++				reg = <0x0 0x0>;
++			};
++		};
++	};
++};
++
++&ref {
++	clock-frequency = <40000000>;
++};
++
++&spi {
++	status = "okay";
++
++	flash@0 {
++		compatible = "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <50000000>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			partition@0 {
++				label = "u-boot";
++				reg = <0x000000 0x040000>;
++				read-only;
++			};
++
++			partition@40000 {
++				label = "u-boot-env";
++				reg = <0x040000 0x010000>;
++			};
++
++			fwconcat0: partition@50000 {
++				label = "fwconcat0";
++				reg = <0x050000 0x800000>;
++			};
++
++			partition@850000 {
++				label = "loader";
++				reg = <0x850000 0x010000>;
++				read-only;
++			};
++
++			fwconcat1: partition@860000 {
++				label = "fwconcat1";
++				reg = <0x860000 0x740000>;
++			};
++
++			partition@fa0000 {
++				label = "config";
++				reg = <0xfa0000 0x040000>;
++				read-only;
++			};
++
++			partition@fe0000 {
++				label = "mib0";
++				reg = <0xfe0000 0x010000>;
++				read-only;
++			};
++
++			art: partition@ff0000 {
++				label = "art";
++				reg = <0xff0000 0x010000>;
++				read-only;
++			};
++		};
++	};
++};
++
++&mdio0 {
++	status = "okay";
++
++	phy-mask = <0>;
++
++	phy0: ethernet-phy@0 {
++		reg = <0>;
++		phy-mode = "rgmii";
++	};
++};
++
++&eth0 {
++	status = "okay";
++
++	pll-data = <0x06000000 0x00000101 0x00001313>;
++
++	mtd-mac-address = <&art 0x1002>;
++
++	phy-mode = "rgmii-id";
++	phy-handle = <&phy0>;
++
++	gmac-config {
++		device = <&gmac>;
++		rxdv-delay = <3>;
++		rxd-delay = <3>;
++		txen-delay = <3>;
++		txd-delay = <3>;
++		rgmii-gmac0 = <1>;
++	};
++};
++
++&wmac {
++	status = "okay";
++
++	qca,disable-5ghz;
++	mtd-cal-data = <&art 0x1000>;
++};
+diff --git a/target/linux/ath79/generic/base-files/etc/board.d/02_network b/target/linux/ath79/generic/base-files/etc/board.d/02_network
+index 8b3f04c8e1..0b919ee9ad 100644
+--- a/target/linux/ath79/generic/base-files/etc/board.d/02_network
++++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network
+@@ -92,7 +92,8 @@ ath79_setup_interfaces()
+ 	ubnt,unifiac-mesh|\
+ 	ubnt,unifi|\
+ 	wd,mynet-wifi-rangeextender|\
+-	winchannel,wb2000)
++	winchannel,wb2000|\
++	zyxel,nwa1121-ni)
+ 		ucidef_set_interface_lan "eth0"
+ 		;;
+ 	airtight,c-75)
+diff --git a/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac b/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+index ac8b59c538..0d8a15a780 100644
+--- a/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
++++ b/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+@@ -65,4 +65,7 @@ case "$board" in
+ 		[ "$PHYNBR" -eq 1 ] && \
+ 			mtd_get_mac_ascii u-boot-env ethaddr > /sys${DEVPATH}/macaddress
+ 		;;
++	zyxel,nwa1121-ni)
++		mtd_get_mac_text mib0 0x4b > /sys${DEVPATH}/macaddress
++		;;
+ esac
+diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
+index f358d44064..71b2e5d945 100644
+--- a/target/linux/ath79/image/generic.mk
++++ b/target/linux/ath79/image/generic.mk
+@@ -8,7 +8,7 @@ DEVICE_VARS += ADDPATTERN_ID ADDPATTERN_VERSION
+ DEVICE_VARS += SEAMA_SIGNATURE SEAMA_MTDBLOCK
+ DEVICE_VARS += KERNEL_INITRAMFS_PREFIX DAP_SIGNATURE
+ DEVICE_VARS += EDIMAX_HEADER_MAGIC EDIMAX_HEADER_MODEL
+-DEVICE_VARS += OPENMESH_CE_TYPE
++DEVICE_VARS += OPENMESH_CE_TYPE ZYXEL_MODEL_STRING
+ 
+ define Build/add-elecom-factory-initramfs
+   $(eval edimax_model=$(word 1,$(1)))
+@@ -151,6 +151,13 @@ define Build/wrgg-pad-rootfs
+ 	$(STAGING_DIR_HOST)/bin/padjffs2 $(IMAGE_ROOTFS) -c 64 >>$@
+ endef
+ 
++define Build/zyxel-tar-bz2
++	mkdir -p $@.tmp
++	mv $@ $@.tmp/$(word 2,$(1))
++	cp $(KDIR)/loader-$(DEVICE_NAME).uImage $@.tmp/$(word 1,$(1)).lzma.uImage
++	$(TAR) -cjf $@ -C $@.tmp .
++	rm -rf $@.tmp
++endef
+ 
+ define Device/seama
+   KERNEL := kernel-bin | append-dtb | relocate-kernel | lzma
+@@ -2229,6 +2236,31 @@ define Device/zbtlink_zbt-wd323
+ endef
+ TARGET_DEVICES += zbtlink_zbt-wd323
+ 
++define Device/zyxel_nwa112x
++  SOC := ar9342
++  DEVICE_VENDOR := ZyXEL
++  LOADER_TYPE := bin
++  LOADER_FLASH_OFFS := 0x050000
++  COMPILE := loader-$(1).bin loader-$(1).uImage
++  COMPILE/loader-$(1).bin := loader-okli-compile
++  COMPILE/loader-$(1).uImage := append-loader-okli $(1) | pad-to 64k | \
++	lzma | uImage lzma
++  KERNEL := kernel-bin | append-dtb | lzma | uImage lzma -M 0x4f4b4c49
++  IMAGE_SIZE := 8192k
++  IMAGES += factory-$$$$(ZYXEL_MODEL_STRING).bin
++  IMAGE/factory-$$$$(ZYXEL_MODEL_STRING).bin := \
++	$$(IMAGE/default) | pad-to 8192k | check-size | zyxel-tar-bz2 \
++	vmlinux_mi124_f1e mi124_f1e-jffs2 | append-md5sum-bin
++endef
++
++define Device/zyxel_nwa1121-ni
++  $(Device/zyxel_nwa112x)
++  DEVICE_MODEL := NWA1121
++  DEVICE_VARIANT := NI
++  ZYXEL_MODEL_STRING := AABJ
++endef
++TARGET_DEVICES += zyxel_nwa1121-ni
++
+ define Device/zyxel_nbg6616
+   SOC := qca9557
+   DEVICE_VENDOR := ZyXEL
+-- 
+2.29.2.windows.2
+

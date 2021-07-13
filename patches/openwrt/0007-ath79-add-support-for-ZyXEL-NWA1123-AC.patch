@@ -1,0 +1,115 @@
+From 837dd53f4a76da0dd34ec9da933d5bee8dc56cc5 Mon Sep 17 00:00:00 2001
+From: Sebastian Schaper <openwrt@sebastianschaper.net>
+Date: Sun, 28 Mar 2021 00:33:45 +0100
+Subject: [PATCH 3/3] ath79: add support for ZyXEL NWA1123-AC
+
+Specifications:
+ * AR9342, 16 MiB Flash, 64 MiB RAM, 802.11n 2T2R, 2.4 GHz
+ * QCA9882 PCIe card, 802.11ac 2T2R
+ * 1x Gigabit Ethernet (AR8035), 802.3af PoE
+
+Installation:
+* OEM Web UI is at 192.168.1.2
+  login as `admin` with password `1234`
+* Flash factory-AAOX.bin
+
+The string `AAOX` needs to be present within the file name of the uploaded
+image to be accepted by the OEM Web-based updater, the factory image is
+named accordingly to save the user from the hassle of manual renaming.
+
+TFTP Recovery:
+* Open the case, connect to TTL UART port (this is the official method
+  described by Zyxel, the reset button is useless during power-on)
+* Extract factory image (.tar.bz2), serve `vmlinux_mi124_f1e.lzma.uImage`
+  and `mi124_f1e-jffs2` via tftp at 192.168.1.10
+* Interrupt uboot countdown, execute commands
+  `run lk`
+  `run lf`
+  to flash the kernel / filesystem accordingly
+
+MAC addresses as verified by OEM firmware:
+use   address   source
+LAN   *:1c      mib0 0x30 ('eth0mac'), art 0x1002 (label)
+2g    *:1c      mib0 0x4b ('wifi0mac')
+5g    *:1e      mib0 0x66 ('wifi1mac')
+
+Signed-off-by: Sebastian Schaper <openwrt@sebastianschaper.net>
+---
+ target/linux/ath79/dts/ar9342_zyxel_nwa1123-ac.dts   | 12 ++++++++++++
+ .../ath79/generic/base-files/etc/board.d/02_network  |  1 +
+ .../etc/hotplug.d/ieee80211/10_fix_wifi_mac          |  6 ++++++
+ target/linux/ath79/image/generic.mk                  | 10 ++++++++++
+ 4 files changed, 29 insertions(+)
+ create mode 100644 target/linux/ath79/dts/ar9342_zyxel_nwa1123-ac.dts
+
+diff --git a/target/linux/ath79/dts/ar9342_zyxel_nwa1123-ac.dts b/target/linux/ath79/dts/ar9342_zyxel_nwa1123-ac.dts
+new file mode 100644
+index 0000000000..b2a58d4ef2
+--- /dev/null
++++ b/target/linux/ath79/dts/ar9342_zyxel_nwa1123-ac.dts
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "ar9342_zyxel_nwa112x.dtsi"
++
++/ {
++	compatible = "zyxel,nwa1123-ac", "qca,ar9342";
++	model = "Zyxel NWA1123-AC";
++};
++
++&pcie {
++	status = "okay";
++};
+diff --git a/target/linux/ath79/generic/base-files/etc/board.d/02_network b/target/linux/ath79/generic/base-files/etc/board.d/02_network
+index bacae74f7a..7b406632b5 100644
+--- a/target/linux/ath79/generic/base-files/etc/board.d/02_network
++++ b/target/linux/ath79/generic/base-files/etc/board.d/02_network
+@@ -94,6 +94,7 @@ ath79_setup_interfaces()
+ 	wd,mynet-wifi-rangeextender|\
+ 	winchannel,wb2000|\
+ 	zyxel,nwa1121-ni|\
++	zyxel,nwa1123-ac|\
+ 	zyxel,nwa1123-ni)
+ 		ucidef_set_interface_lan "eth0"
+ 		;;
+diff --git a/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac b/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+index ac1285b241..16da797928 100644
+--- a/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
++++ b/target/linux/ath79/generic/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+@@ -68,6 +68,12 @@ case "$board" in
+ 	zyxel,nwa1121-ni)
+ 		mtd_get_mac_text mib0 0x4b > /sys${DEVPATH}/macaddress
+ 		;;
++	zyxel,nwa1123-ac)
++		[ "$PHYNBR" -eq 1 ] && \
++			mtd_get_mac_text mib0 0x4b > /sys${DEVPATH}/macaddress
++		[ "$PHYNBR" -eq 0 ] && \
++			mtd_get_mac_text mib0 0x66 > /sys${DEVPATH}/macaddress
++		;;
+ 	zyxel,nwa1123-ni)
+ 		[ "$PHYNBR" -eq 0 ] && \
+ 			mtd_get_mac_text mib0 0x4b > /sys${DEVPATH}/macaddress
+diff --git a/target/linux/ath79/image/generic.mk b/target/linux/ath79/image/generic.mk
+index 730fb33f19..8511f55b87 100644
+--- a/target/linux/ath79/image/generic.mk
++++ b/target/linux/ath79/image/generic.mk
+@@ -2261,6 +2261,16 @@ define Device/zyxel_nwa1121-ni
+ endef
+ TARGET_DEVICES += zyxel_nwa1121-ni
+ 
++define Device/zyxel_nwa1123-ac
++  $(Device/zyxel_nwa112x)
++  DEVICE_MODEL := NWA1123
++  DEVICE_VARIANT := AC
++  ZYXEL_MODEL_STRING := AAOX
++  DEVICE_PACKAGES := kmod-ath10k-ct-smallbuffers \
++	ath10k-firmware-qca988x-ct
++endef
++TARGET_DEVICES += zyxel_nwa1123-ac
++
+ define Device/zyxel_nwa1123-ni
+   $(Device/zyxel_nwa112x)
+   DEVICE_MODEL := NWA1123
+-- 
+2.29.2.windows.2
+

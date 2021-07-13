@@ -118,6 +118,15 @@ device('ubnt-unifiac-mesh', 'ubnt_unifiac-mesh', {
         factory = false,
 })
 
+-- ZyXEL
+
+device('zyxel-nwa1121-ni', 'zyxel_nwa1121-ni')
+
+device('zyxel-nwa1123-ni', 'zyxel_nwa1123-ni')
+
+device('zyxel-nwa1123-ac', 'zyxel_nwa1123-ac')
+
+
 -- TP-Link
 
 device('tp-link-archer-c7-v1', 'tplink_archer-c7-v1')
