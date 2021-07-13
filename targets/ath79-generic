@@ -595,3 +595,26 @@ device('ubiquiti-unifi-swiss-army-knife-ultra', 'ubnt_uk-ultra', {
 	factory = false,
 	packages = ATH10K_PACKAGES_QCA9880,
 })
+
+-- ZyXEL
+
+device('zyxel-nwa1121-ni', 'zyxel_nwa1121-ni', {
+	factory = '-squashfs-factory-AABJ',
+	extra_images = {
+		{'-squashfs-factory-AABJ', '-factory-AABJ', '.bin'},
+	},
+})
+
+device('zyxel-nwa1123-ac', 'zyxel_nwa1123-ac', {
+	factory = '-squashfs-factory-AAOX',
+	extra_images = {
+		{'-squashfs-factory-AAOX', '-factory-AAOX', '.bin'},
+	},
+})
+
+device('zyxel-nwa1123-ni', 'zyxel_nwa1123-ni', {
+	factory = '-squashfs-factory-AAEO',
+	extra_images = {
+		{'-squashfs-factory-AAEO', '-factory-AAEO', '.bin'},
+	},
+})
