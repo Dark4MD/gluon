@@ -117,8 +117,23 @@ device('zyxel-nbg6616', 'zyxel_nbg6616', {
 	packages = ATH10K_PACKAGES_QCA9880,
 })
 
-device('zyxel-nwa1121-ni', 'zyxel_nwa1121-ni')
+device('zyxel-nwa1121-ni', 'zyxel_nwa1121-ni', {
+	factory = '-squashfs-factory-AABJ',
+	extra_images = {
+		{'-squashfs-factory-AABJ', '-factory-AABJ', '.bin'},
+	},
+})	
 
-device('zyxel-nwa1123-ni', 'zyxel_nwa1123-ni')
+device('zyxel-nwa1123-ni', 'zyxel_nwa1123-ni', {
+	factory = '-squashfs-factory-AAEO',
+	extra_images = {
+		{'-squashfs-factory-AAEO', '-factory-AAEO', '.bin'},
+	},
+})	
 
-device('zyxel-nwa1123-ac', 'zyxel_nwa1123-ac')
+device('zyxel-nwa1123-ac', 'zyxel_nwa1123-ac', {
+	factory = '-squashfs-factory-AAOX',
+	extra_images = {
+		{'-squashfs-factory-AAOX', '-factory-AAOX', '.bin'},
+	},
+})	
