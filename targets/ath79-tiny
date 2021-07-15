@@ -1,0 +1,119 @@
+no_opkg()
+
+local ATH10K_PACKAGES_QCA9880 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca988x',
+	'-ath10k-firmware-qca988x-ct',
+}
+
+local ATH10K_PACKAGES_QCA9887 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca9887',
+	'-ath10k-firmware-qca9887-ct',
+}
+
+local ATH10K_PACKAGES_QCA9888 = {
+	'kmod-ath10k',
+	'-kmod-ath10k-ct',
+	'-kmod-ath10k-ct-smallbuffers',
+	'ath10k-firmware-qca9888',
+	'-ath10k-firmware-qca9888-ct',
+}
+
+-- TP-Link
+
+device('tplink_tl-mr3020-v1', 'tplink_tl-mr3020-v1', {
+	factory = false,
+})
+
+device('tplink_tl-wa701nd-v1', 'tplink_tl-wa701nd-v1', {
+	factory = false,
+})
+
+device('tplink_tl-wa801nd-v1', 'tplink_tl-wa801nd-v1', {
+	factory = false,
+})
+
+device('tplink_tl-wa850re-v1', 'tplink_tl-wa850re-v1', {
+	factory = false,
+})
+
+device('tplink_tl-wa850re-v2', 'tplink_tl-wa850re-v2', {
+	factory = false,
+})
+
+device('tplink_tl-wa860re-v1', 'tplink_tl-wa860re-v1', {
+	factory = false,
+})
+
+device('tplink_tl-wa901nd-v1', 'tplink_tl-wa901nd-v1', {
+	factory = false,
+})
+
+device('tplink_tl-wa901nd-v2', 'tplink_tl-wa901nd-v2', {
+	factory = false,
+})
+
+device('tplink_tl-wa901nd-v3', 'tplink_tl-wa901nd-v3', {
+	factory = false,
+})
+
+device('tplink_tl-wa901nd-v4', 'tplink_tl-wa901nd-v4', {
+	factory = false,
+})
+
+device('tplink_tl-wa901nd-v5', 'tplink_tl-wa901nd-v5', {
+	factory = false,
+})
+
+device('tplink_tl-wr802n-v1', 'tplink_tl-wr802n-v1', {
+	factory = false,
+})
+
+device('tplink_tl-wr802n-v2', 'tplink_tl-wr802n-v2', {
+	factory = false,
+})
+
+device('tplink_tl-wr841-v5', 'tplink_tl-wr841-v5', {
+	factory = false,
+})
+
+device('tplink_tl-wr841-v7', 'tplink_tl-wr841-v7', {
+	factory = false,
+})
+
+device('tplink_tl-wr841-v8', 'tplink_tl-wr841-v8', {
+	factory = false,
+})
+
+device('tplink_tl-wr841-v9', 'tplink_tl-wr841-v9', {
+	factory = false,
+})
+
+device('tplink_tl-wr841-v10', 'tplink_tl-wr841-v10', {
+	factory = false,
+})
+
+device('tplink_tl-wr841-v11', 'tplink_tl-wr841-v11', {
+	factory = false,
+})
+
+device('tplink_tl-wr841-v12', 'tplink_tl-wr841-v12', {
+	factory = false,
+})
+
+device('tplink_tl-wr940n-v3', 'tplink_tl-wr940n-v3', {
+	factory = false,
+})
+
+device('tplink_tl-wr940n-v4', 'tplink_tl-wr940n-v4', {
+	factory = false,
+})
+
+device('tplink_tl-wr940n-v6', 'tplink_tl-wr940n-v6', {
+	factory = false,
+})
