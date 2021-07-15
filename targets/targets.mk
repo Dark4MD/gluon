@@ -1,4 +1,5 @@
 $(eval $(call GluonTarget,ath79,generic))
+$(eval $(call GluonTarget,ath79,tiny))
 $(eval $(call GluonTarget,ath79,nand))
 $(eval $(call GluonTarget,bcm27xx,bcm2708))
 $(eval $(call GluonTarget,bcm27xx,bcm2709))
