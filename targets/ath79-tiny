@@ -32,6 +32,11 @@ packages {
 	'-kmod-usb-ledtrig-usbport',
 }
 
+defaults {
+	deprecated = true, -- 4/32
+	class = 'tiny',
+}
+
 -- TP-Link
 
 device('tplink_tl-mr3020-v1', 'tplink_tl-mr3020-v1', {
