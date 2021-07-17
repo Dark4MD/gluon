@@ -24,6 +24,14 @@ local ATH10K_PACKAGES_QCA9888 = {
 	'-ath10k-firmware-qca9888-ct',
 }
 
+packages {
+	'-uboot-envtools',
+	'-kmod-usb-core',
+	'-kmod-usb-ohci',
+	'-kmod-usb2',
+	'-kmod-usb-ledtrig-usbport',
+}
+
 -- TP-Link
 
 device('tplink_tl-mr3020-v1', 'tplink_tl-mr3020-v1', {
