@@ -368,6 +368,46 @@ device('tp-link-tl-wdr4300-v1', 'tplink_tl-wdr4300-v1')
 
 device('tp-link-tl-wr810n-v1', 'tplink_tl-wr810n-v1')
 
+device('tp-link-tl-wr841n-nd-mod-ath79-8m-v8', 'tplink_tl-wr841-v8-8m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-8m-v8'},
+})
+
+device('tp-link-tl-wr841n-nd-mod-ath79-16m-v8', 'tplink_tl-wr841-v8-16m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-8m-v9'},
+})
+
+device('tp-link-tl-wr841n-nd-mod-ath79-8m-v9', 'tplink_tl-wr841-v9-8m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-8m-v10'},
+})
+
+device('tp-link-tl-wr841n-nd-mod-ath79-16m-v9', 'tplink_tl-wr841-v9-16m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-8m-v11'},
+})
+
+device('tp-link-tl-wr841n-nd-mod-ath79-8m-v10', 'tplink_tl-wr841-v10-8m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-16m-v8'},
+})
+
+device('tp-link-tl-wr841n-nd-mod-ath79-16m-v10', 'tplink_tl-wr841-v10-16m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-16m-v8'},
+})
+
+device('tp-link-tl-wr841n-nd-mod-ath79-8m-v11', 'tplink_tl-wr841-v11-8m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-16m-v8'},
+})
+
+device('tp-link-tl-wr841n-nd-mod-ath79-16m-v11', 'tplink_tl-wr841-v11-16m', {
+	factory = false,
+	manifest_aliases = {'tp-link-tl-wr841n-nd-mod-16m-v8'},
+})
+
 device('tp-link-tl-wr842n-v3', 'tplink_tl-wr842n-v3', {
 	manifest_aliases = {
 		'tp-link-tl-wr842n-nd-v3', -- upgrade from OpenWrt 19.07
