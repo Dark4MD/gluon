@@ -40,6 +40,9 @@ device('avm-fritz-box-7360-sl', 'avm_fritz7360sl', {
 
 device('avm-fritz-box-7360-v2', 'avm_fritz7360-v2', {
 	factory = false,
+	manifest_aliases = {
+		'avm-fritz-box-7360-sl' -- upgrade from OpenWrt 22.03
+	},
 })
 
 device('avm-fritz-box-7362-sl', 'avm_fritz7362sl', {
