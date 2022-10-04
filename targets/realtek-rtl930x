@@ -1,0 +1,5 @@
+defaults {
+	factory = false,
+}
+
+device('zyxel_xgs1250-12', 'zyxel_xgs1250-12')

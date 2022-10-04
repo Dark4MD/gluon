@@ -1,0 +1,5 @@
+defaults {
+	factory = false,
+}
+
+device('zyxel_gs1900-48', 'zyxel_gs1900-48')
