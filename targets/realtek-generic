@@ -1,0 +1,2 @@
+
+device('netgear_nge', 'netgear_nge')
