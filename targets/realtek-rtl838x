@@ -1,0 +1,57 @@
+defaults {
+	factory = false,
+}
+defaults {
+	factory = false,
+}
+
+
+
+device('netgear_gs108t-v3', 'netgear_gs108t-v3')
+
+device('netgear_gs110tpp-v1', 'netgear_gs110tpp-v1')
+
+device('netgear_gs308t-v1', 'netgear_gs308t-v1')
+
+device('netgear_gs310tp-v1', 'netgear_gs310tp-v1')
+
+device('allnet_all-sg8208m', 'allnet_all-sg8208m')
+
+
+-- D-Link
+
+device('d-link_dgs-1210-10p', 'd-link_dgs-1210-10p', {
+	factory = '-squashfs-factory_image1',
+})
+
+device('d-link_dgs-1210-16', 'd-link_dgs-1210-16', {
+	factory = '-squashfs-factory_image1',
+})
+
+device('d-link_dgs-1210-28', 'd-link_dgs-1210-28', {
+	factory = '-squashfs-factory_image1',
+})
+
+device('inaba_aml2-17gp', 'inaba_aml2-17gp')
+
+device('iodata_bsh-g24mb', 'iodata_bsh-g24mb')
+
+device('panasonic_m8eg-pn28080k', 'panasonic_m8eg-pn28080k')
+
+device('zyxel_gs1900-10hp', 'zyxel_gs1900-10hp')
+
+device('zyxel_gs1900-16', 'zyxel_gs1900-16')
+
+device('zyxel_gs1900-8', 'zyxel_gs1900-8')
+
+device('zyxel_gs1900-8hp-v1', 'zyxel_gs1900-8hp-v1')
+
+device('zyxel_gs1900-8hp-v2', 'zyxel_gs1900-8hp-v2')
+
+device('zyxel_gs1900-24-v1', 'zyxel_gs1900-24-v1')
+
+device('zyxel_gs1900-24e', 'zyxel_gs1900-24e')
+
+device('zyxel_gs1900-24hp-v1', 'zyxel_gs1900-24hp-v1')
+
+device('zyxel_gs1900-24hp-v2', 'zyxel_gs1900-24hp-v2')

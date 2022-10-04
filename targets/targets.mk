@@ -18,6 +18,11 @@ $(eval $(call GluonTarget,mvebu,cortexa53))
 $(eval $(call GluonTarget,mpc85xx,p1010))
 $(eval $(call GluonTarget,mpc85xx,p1020))
 $(eval $(call GluonTarget,qualcommax,ipq807x))
+
+$(eval $(call GluonTarget,realtek,rtl838x))
+$(eval $(call GluonTarget,realtek,rtl839x))
+$(eval $(call GluonTarget,realtek,rtl930x))
+
 $(eval $(call GluonTarget,ramips,mt7620))
 $(eval $(call GluonTarget,ramips,mt7621))
 $(eval $(call GluonTarget,ramips,mt76x8))

@@ -1,0 +1,2 @@
+
+device('zyxel_xgs1250-12', 'zyxel_xgs1250-12')
