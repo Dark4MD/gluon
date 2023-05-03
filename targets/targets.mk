@@ -21,6 +21,7 @@ $(eval $(call GluonTarget,x86,generic))
 $(eval $(call GluonTarget,x86,geode))
 $(eval $(call GluonTarget,x86,legacy))
 $(eval $(call GluonTarget,x86,64))
+$(eval $(call GluonTarget,bmips,bcm63268))
 
 
 ifneq ($(BROKEN),)

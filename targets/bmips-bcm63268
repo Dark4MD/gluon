@@ -1,0 +1,4 @@
+device('sercomm-shg2500', 'sercomm_shg2500', {
+	factory = false,
+	aliases = {'vodafone-easybox-804'},
+})
