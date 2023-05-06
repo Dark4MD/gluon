@@ -90,6 +90,7 @@ local primary_addrs = {
 		}},
 		{'lantiq', 'xrx200', {
 			'arcadyan,vgv7510kw22-nor',
+			'avm,fritz7430',
 		}},
 		{'lantiq', 'xway', {
 			'netgear,dgn3500b',

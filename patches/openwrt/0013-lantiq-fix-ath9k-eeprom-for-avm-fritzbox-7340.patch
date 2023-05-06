@@ -1,0 +1,57 @@
+From 2c1c49ad186e110cc95acbaf6fc1ac0cf1077f81 Mon Sep 17 00:00:00 2001
+From: Felix Baumann <felix.bau@gmx.de>
+Date: Tue, 28 Feb 2023 04:21:07 +0100
+Subject: [PATCH] lantiq: fix ath9k-eeprom for AVM Fritz!Box 7340
+
+@grische noticed that the extracted wifi calibration data (ath9k-eeprom)
+is incorrect.
+Symptoms included:
+- wrong mac address
+- radio was detected like dbdc (2.4GHz and 5GHz support at the same time)
+
+This patch fixes this by also reversing the order of bytes and throwing
+away the last 4 Bytes.
+Unlike caldata.sh the fritz_cal_extract.c doesn't support reversing.
+So this patch combines both methods.
+
+Signed-off-by: Felix Baumann <felix.bau@gmx.de>
+---
+ .../etc/hotplug.d/firmware/12-ath9k-eeprom    | 22 +++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/target/linux/lantiq/xrx200/base-files/etc/hotplug.d/firmware/12-ath9k-eeprom b/target/linux/lantiq/xrx200/base-files/etc/hotplug.d/firmware/12-ath9k-eeprom
+index c6bacb8d3c162..fa06437295830 100644
+--- a/target/linux/lantiq/xrx200/base-files/etc/hotplug.d/firmware/12-ath9k-eeprom
++++ b/target/linux/lantiq/xrx200/base-files/etc/hotplug.d/firmware/12-ath9k-eeprom
+@@ -23,11 +23,29 @@ case "$FIRMWARE" in
+ 			avm,fritz7360-v2)
+ 				caldata_extract "urlader" 0x985 0x1000
+ 				;;
+-			avm,fritz7412|\
+-			avm,fritz7430)
++			avm,fritz7412)
+ 				/usr/bin/fritz_cal_extract -i 1 -s 0x1e000 -e 0x207 -l 5120 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader") || \
+ 				/usr/bin/fritz_cal_extract -i 1 -s 0x1e800 -e 0x207 -l 5120 -o /lib/firmware/$FIRMWARE $(find_mtd_chardev "urlader")
+ 				;;
++			avm,fritz7430)
++				reversed=$( \
++				/usr/bin/fritz_cal_extract -i 1 -s 0x1e000 -e 0x207 -l 5120 $(find_mtd_chardev "urlader") || \
++				/usr/bin/fritz_cal_extract -i 1 -s 0x1e800 -e 0x207 -l 5120 $(find_mtd_chardev "urlader") | \
++				hexdump -v -e '/1 "%02x "')
++
++				caldata=""
++				i=0
++				count=$((${#reversed} / 3 - 4))
++				for byte in $reversed; do
++					i=$(($i+1))
++					if [ "$i" -gt "$count" ]; then
++						break
++					fi
++					caldata="\x${byte}${caldata}"
++				done
++
++				printf "%b" "$caldata" > /lib/firmware/$FIRMWARE
++				;;
+ 			bt,homehub-v5a)
+ 				caldata_extract_ubi "caldata" 0x1000 0x1000
+ 				ath9k_patch_mac_crc $(macaddr_add $(mtd_get_mac_binary_ubi caldata 0x110c) 2) 0x10c
