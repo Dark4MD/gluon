@@ -1,0 +1,278 @@
+From: Sebastian Schaper <openwrt@sebastianschaper.net>
+Date: Sat, 17 Dec 2022 19:38:42 +0100
+Subject: ramips: add support for D-Link COVR-X1860 A1
+
+The COVR-X1860 is an AX1800 "Whole Home Mesh Wifi-6 System"
+sold in sets of two (COVR-X1862) and three (COVR-X1863).
+
+Specifications:
+- MT7621, 256 MiB RAM, 128 MiB SPI NAND
+- MT7915 + MT7975 2x2 802.11ax (DBDC)
+- 2 network ports 10/100/1000, labelled
+  "Internet" (wan, yellow) and "Ethernet" (lan, black)
+- red/orange/white x-shaped power/status LED on the top
+
+Installation:
+- Keep reset button pressed during plug-in
+- Web Recovery Updater is at 192.168.0.1
+- Upload recovery.bin
+  (seems to work best with Chromium-based browsers)
+
+diff --git a/target/linux/ramips/dts/mt7621_dlink_covr-x1860-a1.dts b/target/linux/ramips/dts/mt7621_dlink_covr-x1860-a1.dts
+new file mode 100644
+index 0000000000000000000000000000000000000000..3f34a3831dd3930147b76d7b94e53205fd9ce9a4
+--- /dev/null
++++ b/target/linux/ramips/dts/mt7621_dlink_covr-x1860-a1.dts
+@@ -0,0 +1,164 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
++
++#include "mt7621.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	compatible = "dlink,covr-x1860-a1", "mediatek,mt7621-soc";
++	model = "D-Link COVR-X1860 A1";
++
++	aliases {
++		led-boot = &status_orange;
++		led-failsafe = &status_red;
++		led-running = &power_white;
++		led-upgrade = &status_red;
++	};
++
++	chosen {
++		bootargs = "console=ttyS0,115200";
++	};
++
++	keys {
++		compatible = "gpio-keys";
++
++		reset {
++			label = "reset";
++			linux,code = <KEY_RESTART>;
++			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
++		};
++
++		wps {
++			label = "wps";
++			linux,code = <KEY_WPS_BUTTON>;
++			gpios = <&gpio 8 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		power_white: power {
++			label = "white:power";
++			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
++		};
++
++		status_orange: status_orange {
++			label = "orange:status";
++			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
++		};
++
++		status_red: status_red {
++			label = "red:status";
++			gpios = <&gpio 14 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&nand {
++	status = "okay";
++
++	partitions {
++		compatible = "fixed-partitions";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		partition@0 {
++			label = "bootloader";
++			reg = <0x0 0x80000>;
++			read-only;
++		};
++
++		partition@80000 {
++			label = "config";
++			reg = <0x80000 0x80000>;
++			read-only;
++		};
++
++		factory: partition@100000 {
++			label = "factory";
++			reg = <0x100000 0x80000>;
++			read-only;
++		};
++
++		partition@180000 {
++			label = "config2";
++			reg = <0x180000 0x40000>;
++			read-only;
++		};
++
++		partition@1c0000 {
++			label = "kernel";
++			reg = <0x1c0000 0x800000>;
++		};
++
++		partition@9c0000 {
++			label = "ubi";
++			reg = <0x9c0000 0x5200000>;
++		};
++
++		partition@5bc0000 {
++			label = "private";
++			reg = <0x5bc0000 0x1400000>;
++			read-only;
++		};
++
++		partition@6fc0000 {
++			label = "mydlink";
++			reg = <0x6fc0000 0x600000>;
++			read-only;
++		};
++
++		partition@75c0000 {
++			label = "myconfig";
++			reg = <0x75c0000 0xa00000>;
++			read-only;
++		};
++	};
++};
++
++&pcie {
++	status = "okay";
++};
++
++&pcie1 {
++	wifi@0,0 {
++		compatible = "mediatek,mt76";
++		reg = <0x0000 0 0 0 0>;
++		mediatek,mtd-eeprom = <&factory 0x0>;
++		mediatek,disable-radar-background;
++	};
++};
++
++&gmac1 {
++	status = "okay";
++	phy-handle = <&ethphy4>;
++};
++
++&mdio {
++	ethphy4: ethernet-phy@4 {
++		reg = <4>;
++	};
++};
++
++&switch0 {
++	ports {
++		port@0 {
++			status = "okay";
++			label = "internet";
++		};
++
++		port@2 {
++			status = "okay";
++			label = "ethernet";
++		};
++	};
++};
++
++&state_default {
++	gpio {
++		groups = "i2c", "uart3", "jtag", "wdt";
++		function = "gpio";
++	};
++};
+diff --git a/target/linux/ramips/image/mt7621.mk b/target/linux/ramips/image/mt7621.mk
+index 4c3a38db442f06d6c1acf77fb729d93a67e2d52a..3fc95ab7652d0e3d5dadd9cc85cc4b7e7855287c 100644
+--- a/target/linux/ramips/image/mt7621.mk
++++ b/target/linux/ramips/image/mt7621.mk
+@@ -368,6 +368,27 @@ define Device/cudy_x6-v2
+ endef
+ TARGET_DEVICES += cudy_x6-v2
+ 
++define Device/dlink_covr-x1860-a1
++  $(Device/dsa-migration)
++  BLOCKSIZE := 128k
++  PAGESIZE := 2048
++  KERNEL_SIZE := 8192k
++  IMAGE_SIZE := 40960k
++  DEVICE_VENDOR := D-Link
++  DEVICE_MODEL := COVR-X1860
++  DEVICE_VARIANT := A1
++  DEVICE_PACKAGES := kmod-mt7915e
++  UBINIZE_OPTS := -E 5
++  KERNEL_LOADADDR := 0x82000000
++  KERNEL := kernel-bin | relocate-kernel 0x80001000 | lzma | \
++	fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
++  IMAGES += factory-recovery.bin
++  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
++  IMAGE/factory-recovery.bin := append-kernel | pad-to $$(KERNEL_SIZE) | \
++	append-ubi | check-size
++endef
++TARGET_DEVICES += dlink_covr-x1860-a1
++
+ define Device/dlink_dap-x1860-a1
+   $(Device/dsa-migration)
+   IMAGE_SIZE := 53248k
+diff --git a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
+index afd4a3710c70b053f0e14ce8b4b46502f0de181f..b358e9ea4287940dfbe7ceaa248eb6a475e5d943 100644
+--- a/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
++++ b/target/linux/ramips/mt7621/base-files/etc/board.d/02_network
+@@ -69,6 +69,9 @@ ramips_setup_interfaces()
+ 		uci add_list firewall.@zone[1].network='eth_data'
+ 		uci add_list firewall.@zone[1].network='eth_om'
+ 		;;
++	dlink,covr-x1860-a1)
++		ucidef_set_interfaces_lan_wan "ethernet" "internet"
++		;;
+ 	gnubee,gb-pc1)
+ 		ucidef_set_interface_lan "ethblack ethblue"
+ 		;;
+@@ -147,6 +150,11 @@ ramips_setup_macs()
+ 		wan_mac="$(grep -m1 mac= "/dev/mtd${index}" | cut -d= -f2)"
+ 		lan_mac=$wan_mac
+ 		;;
++	dlink,covr-x1860-a1)
++		label_mac=$(mtd_get_mac_ascii config2 factory_mac)
++		wan_mac=$label_mac
++		lan_mac=$label_mac
++		;;
+ 	dlink,dir-860l-b1)
+ 		lan_mac=$(mtd_get_mac_ascii factory lanmac)
+ 		wan_mac=$(mtd_get_mac_ascii factory wanmac)
+diff --git a/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac b/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+index d8bd067733a6dba8e63fec579361f9f597d2bea9..d11bdae3189bee4e6c0360dbc3dc59052efdce96 100644
+--- a/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
++++ b/target/linux/ramips/mt7621/base-files/etc/hotplug.d/ieee80211/10_fix_wifi_mac
+@@ -24,6 +24,13 @@ case "$board" in
+ 		[ "$PHYNBR" = "1" ] && \
+ 		macaddr_setbit_la "$(macaddr_add $hw_mac_addr 0x100000)" > /sys${DEVPATH}/macaddress
+ 		;;
++	dlink,covr-x1860-a1)
++		label_mac=$(mtd_get_mac_ascii config2 factory_mac)
++		[ "$PHYNBR" = "0" ] && \
++			macaddr_add $label_mac 1 > /sys${DEVPATH}/macaddress
++		[ "$PHYNBR" = "1" ] && \
++			macaddr_add $label_mac 2 > /sys${DEVPATH}/macaddress
++		;;
+ 	dlink,dap-x1860-a1)
+ 		hw_mac_addr="$(mtd_get_mac_binary factory 0x4)"
+ 		[ "$PHYNBR" = "0" ] && \
+diff --git a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
+index 4a6706e07a60a8ed9b30348b0ce44218866c1311..7762357e8f44545af3bb17463ffc8cf942eed3f4 100755
+--- a/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
++++ b/target/linux/ramips/mt7621/base-files/lib/upgrade/platform.sh
+@@ -55,6 +55,7 @@ platform_do_upgrade() {
+ 	asus,rt-ac85p|\
+ 	asus,rt-ax53u|\
+ 	beeline,smartbox-flash|\
++	dlink,covr-x1860-a1|\
+ 	dlink,dap-x1860-a1|\
+ 	dlink,dir-1960-a1|\
+ 	dlink,dir-2640-a1|\
