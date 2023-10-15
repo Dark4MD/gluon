@@ -21,6 +21,10 @@ device('gl-mt750', 'glinet_gl-mt750', {
 
 -- Netgear
 
+device('netgear-ex6130', 'netgear_ex6130', {
+	factory_ext = '.chk',
+})
+
 device('netgear-ex3700', 'netgear_ex3700', {
 	aliases = {
 		'netgear-ex3800',
