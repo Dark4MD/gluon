@@ -193,6 +193,11 @@ device('ubiquiti-edgerouter-x', 'ubnt_edgerouter-x', {
 	packages = {'-hostapd-mini'},
 })
 
+device('ubiquiti-usw-flex', 'ubnt_usw-flex', {
+	factory = false,
+	packages = {'-hostapd-mini'},
+})
+
 device('ubiquiti-edgerouter-x-sfp', 'ubnt_edgerouter-x-sfp', {
 	factory = false,
 	packages = {'-hostapd-mini'},
