@@ -33,6 +33,10 @@ device('avm-fritz-box-3370-rev-2-micron-nand', 'avm_fritz3370-rev2-micron', {
 	broken = true, -- no button for setup mode; hw revision not visible on device
 })
 
+device('avm-fritz-box-3390', 'avm_fritz3390', {
+	factory = false,
+})
+
 device('avm-fritz-box-7360-sl', 'avm_fritz7360sl', {
 	factory = false,
 	aliases = {'avm-fritz-box-7360-v1'},
