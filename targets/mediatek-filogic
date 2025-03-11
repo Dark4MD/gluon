@@ -79,6 +79,11 @@ device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
 	factory = false,
 })
 
+-- Xiaomi
+
+device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
+	factory = false,
+})
 
 -- Wavlink
 
