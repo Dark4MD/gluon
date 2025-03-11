@@ -79,12 +79,6 @@ device('ubiquiti-unifi-6-plus', 'ubnt_unifi-6-plus', {
 	factory = false,
 })
 
--- Xiaomi
-
-device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
-	factory = false,
-})
-
 -- Wavlink
 
 device('wavlink-wl-wn573hx3', 'wavlink_wl-wn573hx3', {
@@ -99,6 +93,10 @@ device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
 	factory = false,
 })
 
+
+device('xiaomi-mi-router-ax3000t-ubootmod', 'xiaomi_mi-router-ax3000t-ubootmod', {
+	factory = false,
+})
 
 -- Zyxel
 
