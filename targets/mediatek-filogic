@@ -96,6 +96,7 @@ device('xiaomi-mi-router-ax3000t', 'xiaomi_mi-router-ax3000t', {
 
 device('xiaomi-mi-router-ax3000t-ubootmod', 'xiaomi_mi-router-ax3000t-ubootmod', {
 	factory = false,
+	sysupgrade_ext = '.itb',
 })
 
 -- Zyxel
