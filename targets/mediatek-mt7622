@@ -25,4 +25,5 @@ device('ubiquiti-unifi-6-lr-v3', 'ubnt_unifi-6-lr-v3', {
 
 device('xiaomi-redmi-router-ax6s', 'xiaomi_redmi-router-ax6s', {
 	factory = false,
+	sysupgrade_ext = '.itb',
 })
