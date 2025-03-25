@@ -22,9 +22,9 @@ device('gl-mt750', 'glinet_gl-mt750', {
 
 -- NETGEAR
 
-device('netgear-ex6130', 'netgear_ex6130', {
-	factory_ext = '.chk',
-})
+-- device('netgear-ex6130', 'netgear_ex6130', {
+-- 	factory_ext = '.chk',
+-- })
 
 device('netgear-ex3700', 'netgear_ex3700', {
 	aliases = {
@@ -41,13 +41,13 @@ device('netgear-ex6130', 'netgear_ex6130', {
 
 -- Nexx
 
-device('nexx-wt3020-8m', 'nexx_wt3020-8m', {
-	aliases = {
-		'nexx-wt3020ad',
-		'nexx-wt3020f',
-		'nexx-wt3020h',
-	},
-})
+-- device('nexx-wt3020-8m', 'nexx_wt3020-8m', {
+-- 	aliases = {
+-- 		'nexx-wt3020ad',
+-- 		'nexx-wt3020f',
+-- 		'nexx-wt3020h',
+-- 	},
+-- })
 
 
 -- TP-Link
