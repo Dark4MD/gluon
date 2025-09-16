@@ -1,5 +1,6 @@
 defaults {
 	sysupgrade_ext = '.tar',
+	factory = false,
 }
 
 device('ubnt_edgerouter-lite', 'ubnt_edgerouter-lite')
