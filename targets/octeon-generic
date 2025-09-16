@@ -1,3 +1,6 @@
+defaults {
+	sysupgrade_ext = '.tar',
+}
 
 device('ubnt_edgerouter-lite', 'ubnt_edgerouter-lite')
 device('ubnt_unifi-usg', 'ubnt_unifi-usg')
