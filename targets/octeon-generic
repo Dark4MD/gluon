@@ -1,0 +1,7 @@
+
+device('ubnt_edgerouter-lite', 'ubnt_edgerouter-lite')
+device('ubnt_unifi-usg', 'ubnt_unifi-usg')
+device('ubnt_edgerouter-4', 'ubnt_edgerouter-4')
+device('ubnt_edgerouter-6p', 'ubnt_edgerouter-6p')
+device('ubnt_edgerouter', 'ubnt_edgerouter')
+device('itus_shield-router', 'itus_shield-router')
