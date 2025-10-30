@@ -72,6 +72,8 @@ device('tp-link-re200-v3', 'tplink_re200-v3')
 
 device('tp-link-re200-v4', 'tplink_re200-v4')
 
+device('tp-link-re365-v1', 'tplink_re365-v1')
+
 device('tp-link-tl-mr3020-v3', 'tplink_tl-mr3020-v3', {
 	factory = false,
 	extra_images = {
